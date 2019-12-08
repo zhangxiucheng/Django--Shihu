@@ -61,8 +61,6 @@ class IndexView(ListView):
 
 def article_post(request):
     if request.method == "POST":
-        print(request.POST)
-        print('******************************')
         if request.session.get('is_login', None):
             article_post_form = ArticlePostForm(request.POST)
             if article_post_form.is_valid():
