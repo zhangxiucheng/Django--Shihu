@@ -5,7 +5,6 @@ from django.forms import forms
 from django.shortcuts import render, get_object_or_404
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
-from DjangoUeditor.forms import UEditorField
 from .models import Post, Category, Tag
 
 
@@ -54,12 +53,6 @@ class IndexView(ListView):
     context_object_name = 'post_list'
     # 指定 paginate_by 属性后开启分页功能，其值代表每一页包含多少篇文章
     paginate_by = 10
-
-
-class TestUEditorForm(forms.Form):
-    content = UEditorField('内容', width=600, height=300, toolbars="full", imagePath="images/", filePath="files/",
-                           upload_settings={"imageMaxSize": 1204000},
-                           settings={})
 
 
 def post(request):

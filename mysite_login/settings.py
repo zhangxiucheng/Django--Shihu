@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'captcha',
     'blog',
     'comments',
-    'DjangoUeditor',
 ]
 
 MIDDLEWARE = [

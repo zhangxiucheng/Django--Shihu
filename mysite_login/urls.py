@@ -20,13 +20,11 @@ from django.conf.urls import url
 from login import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', views.login),
-    path('register/', views.register),
-    path('logout/', views.logout),
-    path(' captcha/', include('captcha.urls')),
-    url(r'blog/', include('blog.urls')),
-    url(r'comments/', include('comments.urls')),
-
-    path('ueditor/', include('DjangoUeditor.urls')),
+    path("admin/", admin.site.urls),
+    path("login/", views.login),
+    path("register/", views.register),
+    path("logout/", views.logout),
+    path(" captcha/", include("captcha.urls")),
+    url(r"blog/", include("blog.urls")),
+    url(r"comments/", include("comments.urls")),
 ]
