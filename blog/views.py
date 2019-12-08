@@ -2,10 +2,14 @@ from django.views.generic import ListView
 import re
 import markdown
 from django.forms import forms
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from .models import Post, Category, Tag
+from .forms import ArticlePostForm
+from login.models import User
+from django.utils import timezone
 
 
 def detail(request,pk):
@@ -55,6 +59,29 @@ class IndexView(ListView):
     paginate_by = 10
 
 
-def post(request):
-    form = TestUEditorForm
-    return render(request, 'blog/edit.html', {'form': form})
+def article_post(request):
+    if request.method == "POST":
+        print(request.POST)
+        print('******************************')
+        if request.session.get('is_login', None):
+            article_post_form = ArticlePostForm(request.POST)
+            if article_post_form.is_valid():
+                article = article_post_form.save(commit=False)
+                article.author = User.objects.get(name=request.session.get('user_name'))
+                article.created_time = timezone.now()
+                article.save()
+                return redirect('/blog')
+            else:
+                return HttpResponse('表单内容有误')
+        else:
+            return HttpResponse('您尚未登陆,无法写文章')
+    else:
+        if request.session.get('is_login', None):
+            article_post_form = ArticlePostForm()
+            category_list = Category.objects.all()
+            tags_list = Tag.objects.all()
+            context = {'article_post_form': article_post_form, 'categoty_list': category_list, 'tags_list': tags_list}
+            return render(request, 'blog/create.html', context)
+        else:
+            return HttpResponse('您尚未登陆,无法写文章')
+

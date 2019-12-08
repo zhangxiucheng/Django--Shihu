@@ -11,5 +11,5 @@ urlpatterns = [
     path("categories/<int:pk>/", views.category, name="category"),
     path("tags/<int:pk>/", views.tag, name="tag"),
     path("money/", views.Money),
-    path("edit/", views.post),
+    path("create/", views.article_post),
 ]
