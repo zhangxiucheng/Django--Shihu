@@ -1,0 +1,15 @@
+<div class="widget widget-tag-cloud">
+    <h3 class="widget-title">标签云</h3>
+    <ul>
+        <li>
+            <a href="/blog">全部文章</a>
+        </li>
+        {% for tag in tags_list %}
+            <li>
+                <a href="{% url 'blog:tag' tag.pk %}">{{ tag.name }}</a>
+            </li>
+        {% empty %}
+            No tags!
+        {% endfor %}
+    </ul>
+</div>

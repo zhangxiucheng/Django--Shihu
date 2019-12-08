@@ -1,0 +1,10 @@
+<div class="widget widget-author">
+  <h3 class="widget-title">{{ author_name }}的全部文章</h3>
+  <ul>
+    {% for post in author_post_list %}
+      <li>
+        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
