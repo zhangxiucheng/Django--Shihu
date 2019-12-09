@@ -12,7 +12,7 @@ from login.models import User
 from django.utils import timezone
 
 
-def detail(request,pk):
+def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     md = markdown.Markdown(extensions=[
         'markdown.extensions.extra',
@@ -27,10 +27,8 @@ def detail(request,pk):
         id = request.session['user_id']
         if id == post.author.id:
             k = 'allowed'
-            print(k)
             return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
     k = 'not_allowed'
-    print(k)
     return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
 
 # Create your views here.
