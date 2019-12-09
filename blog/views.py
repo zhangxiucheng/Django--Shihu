@@ -105,7 +105,6 @@ def article_edit(request, id):
         if request.session.get('is_login', None):
             article_post_form = ArticlePostForm(request.POST)
             if article_post_form.is_valid():
-                print(request.POST)
                 article.title = request.POST['title']
                 article.body = request.POST['body']
                 article.category = Category.objects.get(id=request.POST['category'])
