@@ -38,7 +38,7 @@ def archive(request, year, month):
     post_list = Post.objects.filter(created_time__year=year,
                                     created_time__month=month
                                     ).order_by('-created_time')
-    return render(request,'blog/index.html',context= {'post_list':post_list})
+    return render(request, 'blog/index.html', context= {'post_list':post_list})
 
 
 def category(request, pk):
@@ -97,3 +97,31 @@ def article_delete(request, id):
         return redirect('/blog')
     else:
         return HttpResponse("非法")
+
+
+def article_edit(request, id):
+    article = Post.objects.get(id=id)
+    if request.method == "POST":
+        if request.session.get('is_login', None):
+            article_post_form = ArticlePostForm(request.POST)
+            if article_post_form.is_valid():
+                print(request.POST)
+                article.title = request.POST['title']
+                article.body = request.POST['body']
+                article.category = Category.objects.get(id=request.POST['category'])
+                article.tags.set(*request.POST.get('tags').split(','), clear=True)
+                article.save()
+                return redirect("blog:detail", pk=id)
+            else:
+                return HttpResponse('表单内容有误')
+        else:
+            return HttpResponse('您尚未登陆,无法写文章')
+    else:
+        if request.session.get('is_login', None):
+            article_post_form = ArticlePostForm()
+            category_list = Category.objects.all()
+            tags_list = Tag.objects.all()
+            context = {'article': article, 'article_post_form': article_post_form, 'categoty_list': category_list, 'tags_list': tags_list}
+            return render(request, 'blog/edit.html', context)
+        else:
+            return HttpResponse('您尚未登陆,无法写文章')

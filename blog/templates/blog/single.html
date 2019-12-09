@@ -14,12 +14,13 @@
                     <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
                     <span class="views-count"><a>{{ post.views }} 阅读</a></span>
                     {% if delete_allowance == 'allowed' %}
-                        <span class="button"><<a href="#" onclick="confirm_safe_delete()">删除文章</a>
+                        <span class="button"><a href="#" onclick="confirm_safe_delete()">删除文章</a>
                         <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}" method="POST">
                             {% csrf_token %}
                             <button type="submit">发送</button>
                         </form>
                         </span>
+                        <span class="button"><a href="{% url 'blog:edit' post.id %}">编辑文章</a></span>
                     {% endif %}
                 </div>
             </header>
