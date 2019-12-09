@@ -23,7 +23,15 @@ def detail(request,pk):
     post.increase_views()
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     post.toc = m.group(1) if m is not None else ''
-    return render(request, "blog/single.html", context={'post': post})
+    if request.session.get('is_login', None):
+        id = request.session['user_id']
+        if id == post.author.id:
+            k = 'allowed'
+            print(k)
+            return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
+    k = 'not_allowed'
+    print(k)
+    return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
 
 # Create your views here.
 
@@ -83,3 +91,11 @@ def article_post(request):
         else:
             return HttpResponse('您尚未登陆,无法写文章')
 
+
+def article_delete(request, id):
+    if request.method == "POST":
+        article = Post.objects.get(id=id)
+        article.delete()
+        return redirect('/blog')
+    else:
+        return HttpResponse("非法")

@@ -12,4 +12,6 @@ urlpatterns = [
     path("tags/<int:pk>/", views.tag, name="tag"),
     path("money/", views.Money),
     path("create/", views.article_post),
+    path("delete/<int:id>", views.article_delete, name="delete")
+
 ]

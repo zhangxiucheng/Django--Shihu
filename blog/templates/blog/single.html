@@ -13,6 +13,14 @@
                     <span class="post-author"><a href="#">{{ post.author }}</a></span>
                     <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
                     <span class="views-count"><a>{{ post.views }} 阅读</a></span>
+                    {% if delete_allowance == 'allowed' %}
+                        <span class="button"><<a href="#" onclick="confirm_safe_delete()">删除文章</a>
+                        <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">发送</button>
+                        </form>
+                        </span>
+                    {% endif %}
                 </div>
             </header>
             <div class="entry-content clearfix">
@@ -51,6 +59,18 @@
             </div>
         </section>
     {% endif %}
+    <script>
+    function confirm_safe_delete() {
+        layer.open({
+            title: "确认删除",
+            content: "确认删除这篇文章吗？",
+            yes: function(index, layero) {
+                $('form#safe_delete button').click();
+                layer.close(index);
+            }
+        })
+    }
+</script>
 {% endblock %}
 {% block sidemenu %}
     <aside class="col-md-4">
