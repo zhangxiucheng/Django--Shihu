@@ -27,4 +27,5 @@ urlpatterns = [
     path(" captcha/", include("captcha.urls")),
     url(r"blog/", include("blog.urls")),
     url(r"comments/", include("comments.urls")),
+    path('reset_passowrd/', include('reset_passowrd.urls')),
 ]
