@@ -55,6 +55,7 @@ def user_confirm(request):
                 code = make_confirm_string(user)
                 send_email(user.email, code)
                 message = '邮件已发送,请前往您预留的邮箱地址确认'
+                usercode_form = UserCode()
                 return render(request, 'reset_passowrd/reset.html', locals())
             else:
                 message = '用户不存在,请确认您输入的用户名'
@@ -115,7 +116,6 @@ def user_reset(request):
             return render(request, 'reset_passowrd/confirm.html', locals())
     usercode_form = UserCode()
     return render(request, 'reset_passowrd/reset.html', locals())
-
 
 def user_changepass(request):
     if request.session.get('allowance', None) == 'allowed':
