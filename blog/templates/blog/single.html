@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load blog_extra %}
 {% load comment_extras %}
-{% block title %}<a href="{{ post.get_absolute_url }}">{{ post.title }}</a>{% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 {% block content %}
     {% if request.session.is_login %}
         <article class="post post-{{ post.pk }}">
@@ -72,15 +72,15 @@
         })
     }
 </script>
-{% endblock %}
 {% block sidemenu %}
-    <aside class="col-md-4">
-        {% block toc %}
-            {% if post.toc %}
-                <div class="widget widget-content"><h3 class="widget-title">文章目录</h3>{{ post.toc|safe }}</div>
-            {% endif %}
-        {% endblock %}
-
+<aside class="col-md-4">
+    {% block toc %}
+    {% if post.toc %}
+    <div class="widget widget-content">
+        <h3 class="widget-title">文章目录</h3>{{ post.toc|safe }}
+    </div>
+    {% endif %}
+    {% endblock %}
         {% show_authors post.author %}
         <div class="rss">
             <a href="/blog/money"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
