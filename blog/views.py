@@ -1,7 +1,6 @@
 from django.views.generic import ListView
 import re
 import markdown
-from django.forms import forms
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.utils.text import slugify
@@ -50,7 +49,7 @@ def category(request, pk):
 def tag(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
     post_list = Post.objects.filter(tags=tag).order_by('-created_time')
-    return render(request, 'blog/index.html', context={'post_list':post_list})
+    return render(request, 'blog/index.html', context={'post_list': post_list})
 
 
 def Money(request):
