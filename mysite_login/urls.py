@@ -1,5 +1,4 @@
 """mysite_login URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
 Examples:
@@ -28,4 +27,5 @@ urlpatterns = [
     url(r"blog/", include("blog.urls")),
     url(r"comments/", include("comments.urls")),
     path('reset_passowrd/', include('reset_passowrd.urls')),
+    path('user_profile/', include('userprofile.urls')),
 ]

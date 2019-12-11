@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect, HttpResponse
 
 
 def profile_edit(request, id):
+    if not User.objects.filter(id=id):
+        return HttpResponse('用户不存在')
     user = User.objects.get(id=id)
     if Profile.objects.filter(user_id=id).exists():
         profile = Profile.objects.get(user_id=id)
@@ -12,9 +14,8 @@ def profile_edit(request, id):
         profile = Profile.objects.create(user=user)
     if request.method == 'POST':
         # 验证修改数据者，是否为用户本人
-        if request.user != user:
-            return HttpResponse("你没有权限修改此用户信息。")
-
+        if request.session.get('user_id', None) != user.id:
+            return HttpResponse('您无权修改个人信息!')
         profile_form = ProfileForm(data=request.POST)
         if profile_form.is_valid():
             # 取得清洗后的合法数据
