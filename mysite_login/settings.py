@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'blog',
     'comments',
     'reset_passowrd',
+    'userprofile',
 ]
 
 MIDDLEWARE = [
@@ -138,4 +139,5 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 # 默认的发件人
 DEFAULT_FROM_EMAIL = '矢呼 <2274296423@qq.com>'
+
 CONFIRM_DAYS = 7

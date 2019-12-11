@@ -1,6 +1,7 @@
 from django.db import models
 from login.models import User
 
+
 class Profile(models.Model):
     # 与 User 模型构成一对一的关系
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -13,3 +14,4 @@ class Profile(models.Model):
 
     def __str__(self):
         return 'user {}'.format(self.user.name)
+
