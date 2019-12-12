@@ -26,7 +26,7 @@ def detail(request, pk):
         id = request.session['user_id']
         if id == post.author.id:
             k = 'allowed'
-            return redirect('blog:detail', context={'post': post, 'delete_allowance': k})
+            return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
     k = 'not_allowed'
     return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
 
