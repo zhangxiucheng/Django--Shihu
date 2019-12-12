@@ -27,7 +27,7 @@
           <div class="collapse navbar-collapse" id="my-nav">
             <ul class="nav navbar-nav">
                 <li class="active"><a href="/blog">主页</a></li>
-                <li class="align-baseline"><a href="/blog">热度</a></li>
+                <li class="align-baseline"><a href="{% url 'blog:index' %}?order=total_views">热度</a></li>
             </ul>
             <form class="navbar-form navbar-left">
                 <div class="form-group">

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'comments',
     'reset_passowrd',
     'userprofile',
+    'ckeditor',
+    'mdeditor',
 ]
 
 MIDDLEWARE = [
@@ -136,8 +138,6 @@ EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 # 默认的发件人
 DEFAULT_FROM_EMAIL = '矢呼 <2274296423@qq.com>'
-
 CONFIRM_DAYS = 7
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')

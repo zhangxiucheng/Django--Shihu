@@ -30,6 +30,6 @@ urlpatterns = [
     url(r"comments/", include("comments.urls")),
     path('reset_passowrd/', include('reset_passowrd.urls')),
     path('user_profile/', include('userprofile.urls')),
+    url(r'mdeditor/', include('mdeditor.urls'))
 ]
-
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

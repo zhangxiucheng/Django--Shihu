@@ -14,15 +14,13 @@ from django.core.paginator import Paginator
 
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    md = markdown.Markdown(extensions=[
+    post.body = markdown.markdown(post.body.replace("\r\n", '  \n'), extensions=[
         'markdown.extensions.extra',
         'markdown.extensions.codehilite',
+        'markdown.extensions.toc',
         TocExtension(slugify=slugify),
-    ])
-    post.body = md.convert(post.body)
+    ], safe_mode=True, enable_attributes=False)
     post.increase_views()
-    m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
-    post.toc = m.group(1) if m is not None else ''
     if request.session.get('is_login', None):
         id = request.session['user_id']
         if id == post.author.id:
@@ -57,20 +55,18 @@ def Money(request):
     return render(request, 'blog/_NeedMoney.html')
 
 
-class IndexView(ListView):
-    model = Post
-    template_name = 'blog/index.html'
-    context_object_name = 'post_list'
-    # 指定 paginate_by 属性后开启分页功能，其值代表每一页包含多少篇文章
-    paginate_by = 10
-
-
 def article_list(request):
-    articlelist=Post.objects.all()
+    if request.GET.get('order') == 'total_views':
+        articlelist = Post.objects.all().order_by('-views')
+        order = 'total_views'
+    else:
+        articlelist = Post.objects.all()
+        order = 'normal'
     paginator=Paginator(articlelist,3)
     page = request.GET.get('page')
     post_list = paginator.get_page(page)
-    return render(request,'blog/index.html',context={'post_list':post_list})
+    context = {'post_list': post_list, 'order': order}
+    return render(request, 'blog/index.html', context)
 
 
 def article_post(request):
