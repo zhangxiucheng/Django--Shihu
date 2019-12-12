@@ -123,3 +123,4 @@ def article_edit(request, id):
             return render(request, 'blog/edit.html', context)
         else:
             return HttpResponse('您尚未登陆,无法写文章')
+
