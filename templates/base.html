@@ -41,8 +41,7 @@
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                       <ul class="dropdown-menu">
                         <li><a href="{% url 'blog:create' %}">写文章</a></li>
-                        <li><a href="#">Another action</a>客官看点啥</li>
-                        <li><a href="#">Something else here</a></li>
+                        <li><a href="{% url 'user_profile:edit' request.session.user_id %}">改改用户资料呗</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'blog:money' %}">联系我们</a></li>
                       </ul>
@@ -54,7 +53,6 @@
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                       <ul class="dropdown-menu">
                         <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
                         <li><a href="#">Something else here</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'blog:money' %}">联系我们</a></li>
