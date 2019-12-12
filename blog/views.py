@@ -9,6 +9,7 @@ from .models import Post, Category, Tag
 from .forms import ArticlePostForm
 from login.models import User
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 
 def detail(request, pk):
@@ -62,6 +63,14 @@ class IndexView(ListView):
     context_object_name = 'post_list'
     # 指定 paginate_by 属性后开启分页功能，其值代表每一页包含多少篇文章
     paginate_by = 10
+
+
+def article_list(request):
+    articlelist=Post.objects.all()
+    paginator=Paginator(articlelist,3)
+    page = request.GET.get('page')
+    post_list = paginator.get_page(page)
+    return render(request,'blog/index.html',context={'post_list':post_list})
 
 
 def article_post(request):
