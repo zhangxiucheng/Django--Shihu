@@ -1,4 +1,3 @@
-from django.views.generic import ListView
 import re
 import markdown
 from django.shortcuts import render, get_object_or_404, redirect
@@ -14,12 +13,15 @@ from django.core.paginator import Paginator
 
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    post.body = markdown.markdown(post.body.replace("\r\n", '  \n'), extensions=[
+    md = markdown.Markdown(extensions=[
         'markdown.extensions.extra',
         'markdown.extensions.codehilite',
-        'markdown.extensions.toc',
         TocExtension(slugify=slugify),
-    ], safe_mode=True, enable_attributes=False)
+    ])
+    post.body.replace("\r\n", '  \n')
+    post.body = md.convert(post.body)
+    m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
+    post.toc = m.group(1) if m is not None else ''
     post.increase_views()
     if request.session.get('is_login', None):
         id = request.session['user_id']
