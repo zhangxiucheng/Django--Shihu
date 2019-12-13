@@ -13,16 +13,17 @@ from django.core.paginator import Paginator
 
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    post.body.replace("\r\n", '  \n')
     md = markdown.Markdown(extensions=[
         'markdown.extensions.extra',
         'markdown.extensions.codehilite',
+        'markdown.extensions.toc',
         TocExtension(slugify=slugify),
-    ])
-    post.body.replace("\r\n", '  \n')
-    post.body = md.convert(post.body)
+    ], safe_mode=True, enable_attributes=False)
+    post.increase_views()
+    post.body=md.convert(post.body)
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     post.toc = m.group(1) if m is not None else ''
-    post.increase_views()
     if request.session.get('is_login', None):
         id = request.session['user_id']
         if id == post.author.id:
