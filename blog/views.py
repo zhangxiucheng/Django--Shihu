@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from .models import Post, Category, Tag
-from .forms import ArticlePostForm
+from .forms import ArticlePostForm, ArticleForm
 from login.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -72,7 +72,7 @@ def article_list(request):
 def article_post(request):
     if request.method == "POST":
         if request.session.get('is_login', None):
-            article_post_form = ArticlePostForm(request.POST)
+            article_post_form = ArticleForm(request.POST)
             if article_post_form.is_valid():
                 article = article_post_form.save(commit=False)
                 article.author = User.objects.get(name=request.session.get('user_name'))
@@ -85,7 +85,7 @@ def article_post(request):
             return HttpResponse('您尚未登陆,无法写文章')
     else:
         if request.session.get('is_login', None):
-            article_post_form = ArticlePostForm()
+            article_post_form = ArticleForm()
             category_list = Category.objects.all()
             tags_list = Tag.objects.all()
             context = {'article_post_form': article_post_form, 'categoty_list': category_list, 'tags_list': tags_list}
@@ -107,7 +107,7 @@ def article_edit(request, id):
     article = Post.objects.get(id=id)
     if request.method == "POST":
         if request.session.get('is_login', None):
-            article_post_form = ArticlePostForm(request.POST)
+            article_post_form = ArticleForm(request.POST)
             if article_post_form.is_valid():
                 article.title = request.POST['title']
                 article.body = request.POST['body']

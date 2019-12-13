@@ -12,3 +12,8 @@ class ArticlePostForm(forms.Form):
     def __init__(self, *args, **kwargs):
         # 执行父类构造方法
         super(ArticlePostForm, self).__init__(*args, **kwargs)
+
+class ArticleForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('title', 'body', 'category', 'tags')
