@@ -121,11 +121,11 @@ def article_edit(request, id):
             return HttpResponse('您尚未登陆,无法写文章')
     else:
         if request.session.get('is_login', None):
-            article_post_form = ArticlePostForm()
+            dic = {'title':article.title, 'body':article.body, 'category':article.category, 'tags':article.tags}
+            article_post_form = ArticlePostForm(dic)
             category_list = Category.objects.all()
             tags_list = Tag.objects.all()
             context = {'article': article, 'article_post_form': article_post_form, 'categoty_list': category_list, 'tags_list': tags_list}
             return render(request, 'blog/edit.html', context)
         else:
             return HttpResponse('您尚未登陆,无法写文章')
-
