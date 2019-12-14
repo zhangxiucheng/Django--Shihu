@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load blog_extra %}
 {% load comment_extras %}
+{% load staticfiles %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
     {% if request.session.is_login %}
@@ -74,17 +75,41 @@
 </script>
 {% endblock %}
 {% block sidemenu %}
-<aside class="col-md-4">
-    {% block toc %}
-    {% if post.toc %}
-    <div class="widget widget-content">
-        <h3 class="widget-title">文章目录</h3>{{ post.toc|safe }}
-    </div>
-    {% endif %}
-    {% endblock %}
-        {% show_authors post.author %}
-        <div class="rss">
-            <a href="/blog/money"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+    <div class="col-3 mt-4" id="sidebar" class="sidebar">
+        <div class="sidebar__inner">
+            <div class="aside">
+            {% block toc %}
+                {% if post.toc %}
+                    <div class="widget widget-content">
+                        <h3 class="widget-title">文章目录</h3>{{ post.toc|safe }}
+                    </div>
+                {% endif %}
+            {% endblock %}
+            {% show_authors post.author %}
+            <div class="rss">
+                <a href="/blog/money"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+            </div>
+            </div>
         </div>
-    </aside>
+    </div>
+    <style>
+    .sidebar{
+        will-change: min-height;
+    }
+    .sidebar__inner{
+        transform: translate(0, 0); /* For browsers don't support translate3d. */
+        transform: translate3d(0, 0, 0);
+        will-change: position, transform;
+    }
+    </style>
 {% endblock %}
+{% block script %}
+<!-- 引入粘性侧边栏 -->
+<script src="{% static 'sticky_side_bar/jquery.sticky-sidebar.min.js' %}"></script>
+<script type="text/javascript">
+    $('#sidebar').stickySidebar({
+        topSpacing: 20,
+        bottomSpacing: 20,
+    });
+</script>
+{% endblock script %}

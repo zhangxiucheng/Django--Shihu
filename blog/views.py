@@ -65,7 +65,7 @@ def article_list(request):
     else:
         articlelist = Post.objects.all()
         order = 'normal'
-    paginator=Paginator(articlelist,3)
+    paginator=Paginator(articlelist, 10)
     page = request.GET.get('page')
     post_list = paginator.get_page(page)
     context = {'post_list': post_list, 'order': order}

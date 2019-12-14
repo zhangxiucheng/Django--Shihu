@@ -65,6 +65,7 @@
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
     </nav>
+    <div id="wrapper">
     <div class="content-body">
         <div class="container">
             <div class="row">
@@ -72,13 +73,32 @@
                     {% block content %}
                     {% endblock content %}
                 </main>
-            {% block sidemenu %}
-            {% endblock %}
+                {% block sidemenu %}
+                {% endblock %}
             </div>
         </div>
     </div>
+    <div id="push"></div>
+    </div>
+    {% include 'footer.html' %}
     <script src="{% static 'js/jquery-3.2.1.js' %}"></script>
     <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'layer/layer.js' %}"></script>
+    {% block script %}{% endblock script %}
+    {% include 'to_top.html' %}
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #wrapper {
+            min-height: 100%;
+            margin-bottom: -60px;
+        }
+        #push {
+            height: 60px;
+        }
+    </style>
   </body>
 </html>

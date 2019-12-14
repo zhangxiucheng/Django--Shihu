@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load blog_extra %}
+{% load staticfiles %}
 {% block title %}主页{% endblock %}
 {% block content %}
     {% for post in post_list %}
@@ -64,6 +65,8 @@
     </div>
 {% endblock %}
 {% block sidemenu %}
+    <div class="sidebar" id="sidebar">
+    <div class="sidebar_inner">
     <aside class="col-md-4">
         {% block toc %}
         {% endblock toc %}
@@ -75,5 +78,26 @@
             <a href="/blog/money/"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
         </div>
     </aside>
+    </div>
+    </div>
+    <style>
+    .sidebar{
+        will-change: min-height;
+    }
+    .sidebar__inner{
+        transform: translate(0, 0); /* For browsers don't support translate3d. */
+        transform: translate3d(0, 0, 0);
+        will-change: position, transform;
+    }
+    </style>
 {% endblock %}
-
+{% block script %}
+<!-- 引入粘性侧边栏 -->
+<script src="{% static 'sticky_side_bar/jquery.sticky-sidebar.min.js' %}"></script>
+<script type="text/javascript">
+    $('#sidebar').stickySidebar({
+        topSpacing: 20,
+        bottomSpacing: 20,
+    });
+</script>
+{% endblock script %}
