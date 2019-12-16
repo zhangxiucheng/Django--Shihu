@@ -21,7 +21,7 @@ def detail(request, pk):
         TocExtension(slugify=slugify),
     ], safe_mode=True, enable_attributes=False)
     post.increase_views()
-    post.body=md.convert(post.body)
+    post.body = md.convert(post.body)
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     post.toc = m.group(1) if m is not None else ''
     if request.session.get('is_login', None):
@@ -32,26 +32,39 @@ def detail(request, pk):
     k = 'not_allowed'
     return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
 
+
 # Create your views here.
 
 
 def archive(request, year, month):
-    post_list = Post.objects.filter(created_time__year=year,
-                                    created_time__month=month
-                                    ).order_by('-created_time')
-    return render(request, 'blog/index.html', context= {'post_list':post_list})
+    articlelist = Post.objects.filter(created_time__year=year,
+                                      created_time__month=month
+                                      ).order_by('-created_time')
+    paginator = Paginator(articlelist, 10)
+    page = request.GET.get('page')
+    post_list = paginator.get_page(page)
+    context = {'post_list': post_list}
+    return render(request, 'blog/index.html', context)
 
 
 def category(request, pk):
     cate = get_object_or_404(Category, pk=pk)
-    post_list = Post.objects.filter(category=cate).order_by('-created_time')
-    return render(request, 'blog/index.html', context={'post_list':post_list})
+    articlelist = Post.objects.filter(category=cate).order_by('-created_time')
+    paginator = Paginator(articlelist, 10)
+    page = request.GET.get('page')
+    post_list = paginator.get_page(page)
+    context = {'post_list': post_list}
+    return render(request, 'blog/index.html', context)
 
 
 def tag(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
-    post_list = Post.objects.filter(tags=tag).order_by('-created_time')
-    return render(request, 'blog/index.html', context={'post_list': post_list})
+    articlelist = Post.objects.filter(tags=tag).order_by('-created_time')
+    paginator = Paginator(articlelist, 10)
+    page = request.GET.get('page')
+    post_list = paginator.get_page(page)
+    context = {'post_list': post_list}
+    return render(request, 'blog/index.html', context)
 
 
 def Money(request):
@@ -65,7 +78,7 @@ def article_list(request):
     else:
         articlelist = Post.objects.all()
         order = 'normal'
-    paginator=Paginator(articlelist, 10)
+    paginator = Paginator(articlelist, 10)
     page = request.GET.get('page')
     post_list = paginator.get_page(page)
     context = {'post_list': post_list, 'order': order}
@@ -124,11 +137,12 @@ def article_edit(request, id):
             return HttpResponse('您尚未登陆,无法写文章')
     else:
         if request.session.get('is_login', None):
-            dic = {'title':article.title, 'body':article.body, 'category':article.category, 'tags':article.tags}
+            dic = {'title': article.title, 'body': article.body, 'category': article.category, 'tags': article.tags}
             article_post_form = ArticlePostForm(dic)
             category_list = Category.objects.all()
             tags_list = Tag.objects.all()
-            context = {'article': article, 'article_post_form': article_post_form, 'categoty_list': category_list, 'tags_list': tags_list}
+            context = {'article': article, 'article_post_form': article_post_form, 'categoty_list': category_list,
+                       'tags_list': tags_list}
             return render(request, 'blog/edit.html', context)
         else:
             return HttpResponse('您尚未登陆,无法写文章')
