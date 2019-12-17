@@ -4,20 +4,26 @@ from django.urls import reverse
 import markdown
 from django.utils.html import strip_tags
 from django.utils import timezone
+from mdeditor.fields import MDTextField
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
+
     def __str__(self):
         return self.name
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
+
     def __str__(self):
         return self.name
 
+
 class Post(models.Model):
     title = models.CharField(max_length=70)
-    body = models.TextField()
+    body = MDTextField()
     created_time = models.DateTimeField()
     modified_time = models.DateTimeField()
     excerpt = models.CharField(max_length=200, blank=True)
@@ -27,6 +33,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0)
     posts = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return self.title
 
@@ -52,7 +59,8 @@ class Post(models.Model):
 
     # 摘要逻辑 重写save()方法,保存到数据库之前进行一次过滤
     def save(self, *args, **kwargs):
-        self.modified_time = timezone.now()
+        self.created_time = timezone.now()
+        self.modified_time = self.created_time
         # 如果没填写摘要
         if not self.excerpt:
             # 实例化一个Markdown对象,用于渲染body的文本
