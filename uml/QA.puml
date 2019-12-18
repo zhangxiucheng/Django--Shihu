@@ -1,0 +1,29 @@
+@startuml QA
+
+left to right direction
+
+actor 游客
+actor 注册用户
+' actor 管理员
+' actor 业务管理员
+' actor 系统
+
+rectangle 问答 {
+    游客 ---> (看)
+    游客 ---> (分享)
+
+    注册用户 ---> (看)
+    注册用户 ---> (关注)
+    注册用户 ---> (创建/编辑回答)
+    注册用户 ---> (邀请回答)
+    注册用户 ---> (分享)
+    注册用户 ---> (举报)
+    注册用户 ---> (评论)
+    注册用户 ---> (点赞)
+}
+
+note right of (看): ok
+note right of (创建/编辑回答): 基本功能ok，\n但没有“所见即所得”
+note right of (评论): ok
+
+@enduml

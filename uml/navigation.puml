@@ -1,0 +1,15 @@
+@startuml navigation
+
+left to right direction
+
+actor 注册用户
+actor 游客
+
+rectangle 导航 {
+    注册用户 -->(搜索问题)
+    注册用户 --> (侧边栏相关问题导航)
+
+    游客 --> (侧边栏相关问题导航)
+}
+note right of (侧边栏相关问题导航): 有侧边栏\n但不是相关问题的
+@enduml

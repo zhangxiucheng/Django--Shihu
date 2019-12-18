@@ -1,0 +1,20 @@
+@startuml user
+left to right direction
+
+actor 游客
+actor 注册用户
+actor 管理员
+
+rectangle 用户管理 {
+    游客 --> (注册)
+
+    注册用户 --> (登录)
+
+    管理员 ...> (登录): 登录进管理界面
+    管理员 --> (禁言用户)
+    管理员 --> (查看举报)
+}
+
+note right of (注册): ok
+note right of (登录): ok
+@enduml
