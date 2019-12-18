@@ -8,6 +8,7 @@ actor 管理员
 rectangle 用户管理 {
     游客 --> (注册)
 
+    注册用户 --> (找回密码)
     注册用户 --> (登录)
 
     管理员 ...> (登录): 登录进管理界面
@@ -17,4 +18,5 @@ rectangle 用户管理 {
 
 note right of (注册): ok
 note right of (登录): ok
+note right of (找回密码): ok
 @enduml
