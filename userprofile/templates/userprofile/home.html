@@ -7,6 +7,15 @@
                 <div class="col-8">用户名:{{ profile.user.name }}</div>
                 <br>
                 <br>
+                {% if allowance == 'allowed' %}
+                    <span class="button"><a href="#" onclick="confirm_safe_delete()">删除用户</a>
+                        <form style="display:none;" id="safe_delete" action="{% url 'user_profile:del' profile.user.id %}"
+                              method="POST">
+                            {% csrf_token %}
+                            <button type="submit">发送</button>
+                        </form>
+                </span>
+                {% endif %}
                 {% if profile.avatar %}
                     <img src="{{ profile.avatar.url }}" class="col-md-4">
                 {% else %}
@@ -30,4 +39,16 @@
             </div>
         </div>
     </div>
+    <script>
+        function confirm_safe_delete() {
+            layer.open({
+                title: "确认删除",
+                content: "确认删除此用户吗？",
+                yes: function (index, layero) {
+                    $('form#safe_delete button').click();
+                    layer.close(index);
+                }
+            })
+        }
+    </script>
 {% endblock content %}

@@ -28,7 +28,6 @@ def profile_edit(request, id):
             if 'avatar' in request.FILES:
                 profile.avatar = profile_cd["avatar"]
             profile.save()
-            # 带参数的 redirect()
             return redirect("user_profile:home", id=id)
         else:
             return HttpResponse("注册表单输入有误。请重新输入~")
@@ -46,4 +45,23 @@ def profile_home(request, id):
     user = User.objects.get(id=id)
     output_list = Post.objects.filter(author=user)
     profile = Profile.objects.get(user=user)
-    return render(request, 'userprofile/home.html', context={'output_list': output_list, 'profile': profile})
+    if request.session.get('user_id', None) == user.id:
+        allowance = 'allowed'
+    else:
+        allowance = 'not_allowed'
+    return render(request, 'userprofile/home.html',
+                  context={'output_list': output_list, 'profile': profile, 'allowance': allowance})
+
+
+def user_delete(request, id):
+    if request.method == 'GET':
+        return HttpResponse('非法操作!')
+    else:
+        if not request.session.get('is_login', None):
+            return HttpResponse('非法操作!')
+        user = User.objects.get(id=id)
+        if not user.id == request.session.get('user_id', None):
+            return HttpResponse('非法操作!')
+        user.delete()
+        request.session.flush()
+        return redirect("blog:index")
