@@ -2,6 +2,7 @@ from .forms import ProfileForm
 from .models import Profile
 from login.models import User
 from django.shortcuts import render, redirect, HttpResponse
+from blog.models import Post
 
 
 def profile_edit(request, id):
@@ -28,7 +29,7 @@ def profile_edit(request, id):
                 profile.avatar = profile_cd["avatar"]
             profile.save()
             # 带参数的 redirect()
-            return redirect("user_profile:edit", id=id)
+            return redirect("user_profile:home", id=id)
         else:
             return HttpResponse("注册表单输入有误。请重新输入~")
     elif request.method == 'GET':
@@ -37,3 +38,12 @@ def profile_edit(request, id):
         return render(request, 'userprofile/edit.html', context)
     else:
         return HttpResponse("请使用GET或POST请求数据")
+
+
+def profile_home(request, id):
+    if not User.objects.filter(id=id):
+        return HttpResponse('没有此用户存在')
+    user = User.objects.get(id=id)
+    output_list = Post.objects.filter(author=user)
+    profile = Profile.objects.get(user=user)
+    return render(request, 'userprofile/home.html', context={'output_list': output_list, 'profile': profile})

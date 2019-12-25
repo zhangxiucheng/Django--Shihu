@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% load staticfiles %}
+{% block title %} 用户信息 {% endblock title %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <div class="col-8">用户名:{{ profile.user.name }}</div>
+                <br>
+                <br>
+                {% if profile.avatar %}
+                    <img src="{{ profile.avatar.url }}" class="col-md-4">
+                {% else %}
+                    <h5 class="col-8">暂无头像</h5>
+                {% endif %}
+                <br>
+                <br>
+                {% if profile.bio %}
+                    <h3>个人简介:</h3>
+                    <h5>{{ profile.bio }}</h5>
+                {% else %}
+                    <h5>暂无个人简介</h5>
+                {% endif %}
+                {% for post in output_list %}
+                    <li>
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    </li>
+                {% empty %}
+                    暂无文章！
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
