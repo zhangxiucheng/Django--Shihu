@@ -10,13 +10,15 @@
                 <h1 class="entry-title">{{ post.title }}</h1>
                 <div class="entry-meta">
                     <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-                    <span class="post-date"><a><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                    <span class="post-date"><a><time class="entry-date"
+                                                     datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
                     <span class="post-author"><a href="#">{{ post.author }}</a></span>
                     <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
                     <span class="views-count"><a>{{ post.views }} 阅读</a></span>
                     {% if delete_allowance == 'allowed' %}
                         <span class="button"><a href="#" onclick="confirm_safe_delete()">删除文章</a>
-                        <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}" method="POST">
+                        <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}"
+                              method="POST">
                             {% csrf_token %}
                             <button type="submit">发送</button>
                         </form>
@@ -44,7 +46,8 @@
                 <h1 class="entry-title">{{ post.title }}</h1>
                 <div class="entry-meta">
                     <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-                    <span class="post-date"><a><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                    <span class="post-date"><a><time class="entry-date"
+                                                     datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
                     <span class="post-author"><a href="#">{{ post.author }}</a></span>
                     <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
                     <span class="views-count"><a>{{ post.views }} 阅读</a></span>
@@ -62,22 +65,21 @@
         </section>
     {% endif %}
     <script>
-    function confirm_safe_delete() {
-        layer.open({
-            title: "确认删除",
-            content: "确认删除这篇文章吗？",
-            yes: function(index, layero) {
-                $('form#safe_delete button').click();
-                layer.close(index);
-            }
-        })
-    }
-</script>
+        function confirm_safe_delete() {
+            layer.open({
+                title: "确认删除",
+                content: "确认删除这篇文章吗？",
+                yes: function (index, layero) {
+                    $('form#safe_delete button').click();
+                    layer.close(index);
+                }
+            })
+        }
+    </script>
 {% endblock %}
 {% block sidemenu %}
-    <div class="col-3 mt-4" id="sidebar" class="sidebar">
-        <div class="sidebar__inner">
-            <div class="aside">
+    <div class="col-md-4">
+        <div class="aside">
             {% block toc %}
                 {% if post.toc %}
                     <div class="widget widget-content">
@@ -87,29 +89,8 @@
             {% endblock %}
             {% show_authors post.author %}
             <div class="rss">
-                <a href="/blog/money"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
-            </div>
+                <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
             </div>
         </div>
     </div>
-    <style>
-    .sidebar{
-        will-change: min-height;
-    }
-    .sidebar__inner{
-        transform: translate(0, 0); /* For browsers don't support translate3d. */
-        transform: translate3d(0, 0, 0);
-        will-change: position, transform;
-    }
-    </style>
 {% endblock %}
-{% block script %}
-<!-- 引入粘性侧边栏 -->
-<script src="{% static 'sticky_side_bar/jquery.sticky-sidebar.min.js' %}"></script>
-<script type="text/javascript">
-    $('#sidebar').stickySidebar({
-        topSpacing: 20,
-        bottomSpacing: 20,
-    });
-</script>
-{% endblock script %}
