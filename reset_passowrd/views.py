@@ -2,9 +2,11 @@ import datetime
 import pytz
 from django.shortcuts import render, redirect
 from .forms import UserForm, UserPass, UserCode
-from login.models import ConfirmString, User
+from login.models import User
 from django.conf import settings
+from .models import ConfirmString
 import hashlib
+
 
 def make_confirm_string(user):
     from uuid import uuid4
@@ -81,7 +83,6 @@ def send_email(email, code):
 
 def user_reset(request):
     if request.session.get('is_login', None):
-        # 登录状态不允许注册。你可以修改这条原则！
         return redirect('/blog')
     if request.method == "POST":
         if request.session.get('user_id', None):
@@ -117,6 +118,7 @@ def user_reset(request):
     usercode_form = UserCode()
     return render(request, 'reset_passowrd/reset.html', locals())
 
+
 def user_changepass(request):
     if request.session.get('allowance', None) == 'allowed':
         if request.method == 'POST':
@@ -124,7 +126,7 @@ def user_changepass(request):
             if userpass_form.is_valid():
                 password1 = userpass_form.cleaned_data['password1']
                 password2 = userpass_form.cleaned_data['password2']
-                if password1 != password2:  # 判断两次密码是否相同
+                if password1 != password2:
                     message = "两次输入的密码不同！"
                     return render(request, 'reset_passowrd/pass.html', locals())
                 else:

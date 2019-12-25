@@ -4,8 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
-from .models import Post, Category, Tag
-from .forms import ArticlePostForm, ArticleForm
+from .models import Post, Category, Tag, Answer, Liked
+from .forms import ArticlePostForm, ArticleForm, AnswerForm
 from login.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -24,16 +24,16 @@ def detail(request, pk):
     post.body = md.convert(post.body)
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     post.toc = m.group(1) if m is not None else ''
+    answer_list = Answer.objects.filter(post=post)
     if request.session.get('is_login', None):
         id = request.session['user_id']
         if id == post.author.id:
             k = 'allowed'
-            return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
+            return render(request, "blog/single.html",
+                          context={'post': post, 'delete_allowance': k, 'answer_list': answer_list})
     k = 'not_allowed'
-    return render(request, "blog/single.html", context={'post': post, 'delete_allowance': k})
-
-
-# Create your views here.
+    return render(request, "blog/single.html",
+                  context={'post': post, 'delete_allowance': k, 'answer_list': answer_list})
 
 
 def archive(request, year, month):
@@ -98,7 +98,7 @@ def article_post(request):
             else:
                 return HttpResponse('表单内容有误')
         else:
-            return HttpResponse('您尚未登陆,无法写文章')
+            return HttpResponse('您尚未登陆,无法写问题')
     else:
         if request.session.get('is_login', None):
             article_post_form = ArticleForm()
@@ -107,7 +107,7 @@ def article_post(request):
             context = {'article_post_form': article_post_form, 'categoty_list': category_list, 'tags_list': tags_list}
             return render(request, 'blog/create.html', context)
         else:
-            return HttpResponse('您尚未登陆,无法写文章')
+            return HttpResponse('您尚未登陆,无法写问题')
 
 
 def article_delete(request, id):
@@ -134,7 +134,7 @@ def article_edit(request, id):
             else:
                 return HttpResponse('表单内容有误')
         else:
-            return HttpResponse('您尚未登陆,无法写文章')
+            return HttpResponse('您尚未登陆,无法写问题')
     else:
         if request.session.get('is_login', None):
             dic = {'title': article.title, 'body': article.body, 'category': article.category, 'tags': article.tags}
@@ -145,4 +145,90 @@ def article_edit(request, id):
                        'tags_list': tags_list}
             return render(request, 'blog/edit.html', context)
         else:
-            return HttpResponse('您尚未登陆,无法写文章')
+            return HttpResponse('您尚未登陆,无法写问题')
+
+
+def answer_post(request, id):
+    if request.method == "POST":
+        if request.session.get('is_login', None):
+            if not Post.objects.filter(id=id):
+                return HttpResponse('没有这篇文章')
+            answer = AnswerForm(request.POST)
+            if answer.is_valid():
+                article = answer.save(commit=False)
+                article.author = User.objects.get(name=request.session.get('user_name'))
+                article.created_time = timezone.now()
+                article.post = Post.objects.get(id=id)
+                article.save()
+                return redirect('/blog')
+            else:
+                return HttpResponse('表单内容有误')
+        else:
+            return HttpResponse('您尚未登陆,无法写回答')
+    else:
+        if request.session.get('is_login', None):
+            answer = AnswerForm()
+            tags_list = Tag.objects.all()
+            context = {'answer_form': answer, 'tags_list': tags_list}
+            return render(request, 'blog/create.html', context)
+        else:
+            return HttpResponse('您尚未登陆,无法写回答')
+
+
+def answer_del(request, id):
+    if request.method == "POST":
+        if not request.session.get('is_login', None):
+            return HttpResponse('您尚未登录,请登录后操作')
+        article = Answer.objects.get(id=id)
+        if not article.author.id == request.session.get('user_id', None):
+            return HttpResponse('这不是您的文章,请查证后操作')
+        article.delete()
+        return redirect('/blog')
+    else:
+        return HttpResponse("非法操作")
+
+
+def answer_edit(request, id):
+    if request.session.get('is_login', None):
+        return HttpResponse('您尚未登陆,无法操作')
+    answer = Answer.objects.get(id=id)
+    if not answer.author.id == request.session.get('user_id', None):
+        return HttpResponse('非法操作!')
+    if request.method == "POST":
+        answer_form = AnswerForm(request.POST)
+        if answer_form.is_valid():
+            answer.title = request.POST['title']
+            answer.body = request.POST['body']
+            answer.tags.set(*request.POST.get('tags').split(','), clear=True)
+            answer.save()
+            return redirect()
+        else:
+            return HttpResponse('表单内容有误,请重新输入')
+    else:
+        dic = {'title': answer.title, 'body': answer.body, 'tags': answer.tags}
+        answer_form = AnswerForm(dic)
+        tags_list = Tag.objects.all()
+        context = {'answer_form': answer_form, 'tags_list': tags_list}
+        return render(request, '', context)
+
+
+def answer_detail(request, id):
+    answer = get_object_or_404(Answer, id=id)
+    answer.body.replace("\r\n", '  \n')
+    md = markdown.Markdown(extensions=[
+        'markdown.extensions.extra',
+        'markdown.extensions.codehilite',
+        'markdown.extensions.toc',
+        TocExtension(slugify=slugify),
+    ], safe_mode=True, enable_attributes=False)
+    answer.increase_views()
+    answer.body = md.convert(answer.body)
+    m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
+    answer.toc = m.group(1) if m is not None else ''
+    if request.session.get('is_login', None):
+        id = request.session['user_id']
+        if id == answer.author.id:
+            k = 'allowed'
+            return render(request, "blog/.html", context={'answer': answer, 'delete_allowance': k})
+    k = 'not_allowed'
+    return render(request, "blog/.html", context={'answer': answer, 'delete_allowance': k})

@@ -1,6 +1,5 @@
 from django.urls import path, include
 from . import views
-from django.conf.urls import url
 
 
 app_name = "blog"
@@ -14,4 +13,5 @@ urlpatterns = [
     path("create/", views.article_post, name="create"),
     path("delete/<int:id>", views.article_delete, name="delete"),
     path("edit/<int:id>", views.article_edit, name="edit"),
+
 ]

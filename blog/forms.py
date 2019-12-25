@@ -13,7 +13,19 @@ class ArticlePostForm(forms.Form):
         # 执行父类构造方法
         super(ArticlePostForm, self).__init__(*args, **kwargs)
 
+
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('title', 'body', 'category', 'tags')
+
+
+class AnswerForm(forms.Form):
+    title = forms.CharField()
+    body = MDTextFormField()
+    #tags是一个多选
+    tags = forms.MultipleChoiceField()
+
+    def __init__(self, *args, **kwargs):
+        # 执行父类构造方法
+        super(AnswerForm, self).__init__(*args, **kwargs)
