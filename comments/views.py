@@ -21,14 +21,14 @@ def comment(request, id):
 
     # 先把POST的内容过一遍markdown的渲染器
     # 这事是不是应该拿js在用户机器上做？
-    md = markdown.Markdown(extensions=[
-        'markdown.extensions.extra',
-        'markdown.extensions.codehilite',
-    ])
+    #md = markdown.Markdown(extensions=[
+    #    'markdown.extensions.extra',
+    #    'markdown.extensions.codehilite',
+    #])
     # https://docs.djangoproject.com/zh-hans/3.0/ref/request-response/#django.http.QueryDict.__setitem__
-    rPOST = request.POST.copy()
-    rPOST.__setitem__("text", md.convert(rPOST.get("text")))
-    form = CommentForm(rPOST)
+    #rPOST = request.POST.copy()
+    #rPOST.__setitem__("text", md.convert(rPOST.get("text")))
+    form = CommentForm(request.POST)
 
     # 当调用 form.is_valid() 方法时，django 自动帮我们检查表单的数据是否符合格式要求。
     if form.is_valid():
