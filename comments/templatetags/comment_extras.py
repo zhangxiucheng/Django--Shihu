@@ -1,25 +1,24 @@
 from django import template
 from ..forms import CommentForm
 
-
 register = template.Library()
 
 
 @register.inclusion_tag('./inclusions/_form.html', takes_context=True)
-def show_comment_form(context, post, form=None):
+def show_comment_form(context, answer, form=None):
     if form is None:
         form = CommentForm()
     return {
         'form': form,
-        'post': post,
+        'answer': answer,
     }
 
 
 @register.inclusion_tag('./inclusions/_list.html', takes_context=True)
-def show_comments(context, post):
-    comment_list = post.comment_set.all().order_by('-created_time')
+def show_comments(context, answer):
+    comment_list = answer.comment_set.all().order_by('-created_time')
     comment_count = comment_list.count()
     return {
-        'comment_count':comment_count,
-        'comment_list':comment_list,
+        'comment_count': comment_count,
+        'comment_list': comment_list,
     }
