@@ -32,7 +32,6 @@ class Post(models.Model):
     # 作者  使用django内置应用
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.PositiveIntegerField(default=0)
-    liked = models.ManyToManyField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -61,19 +60,11 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         self.created_time = timezone.now()
         self.modified_time = self.created_time
-        # 如果没填写摘要
-        if not self.excerpt:
-            # 实例化一个Markdown对象,用于渲染body的文本
-            md = markdown.Markdown(extensions=[
-                'markdown.extensions.extra',
-                'markdown.extensions.codehilite',
-            ])
-            # 先将 Markdown 文本渲染成 HTML 文本
-            # strip_tags 去掉 HTML 文本的全部 HTML 标签
-            # 从文本摘取前 54 个字符赋给 excerpt
-            self.excerpt = strip_tags(md.convert(self.body))[:54]
-        # 调用父类的 save 方法将数据保存到数据库中
-        # 这里save不能有self参数(不能在模型保存中强制更新和插入)
+        md = markdown.Markdown(extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+        ])
+        self.excerpt = strip_tags(md.convert(self.body))[:54]
         super(Post, self).save(*args, **kwargs)
 
 
@@ -97,26 +88,18 @@ class Answer(models.Model):
         # 只更新数据库中views字段的值
         self.save(update_fields=['views'])
 
-    # 摘要逻辑 重写save()方法,保存到数据库之前进行一次过滤
     def save(self, *args, **kwargs):
         self.created_time = timezone.now()
         self.modified_time = self.created_time
-        if not self.excerpt:
-            # 实例化一个Markdown对象,用于渲染body的文本
-            md = markdown.Markdown(extensions=[
-                'markdown.extensions.extra',
-                'markdown.extensions.codehilite',
-            ])
-            # 先将 Markdown 文本渲染成 HTML 文本
-            # strip_tags 去掉 HTML 文本的全部 HTML 标签
-            # 从文本摘取前 54 个字符赋给 excerpt
-            self.excerpt = strip_tags(md.convert(self.body))[:54]
-        # 调用父类的 save 方法将数据保存到数据库中
-        # 这里save不能有self参数(不能在模型保存中强制更新和插入)
+        md = markdown.Markdown(extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+        ])
+        self.excerpt = strip_tags(md.convert(self.body))[:54]
         super(Answer, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse()
+        return reverse('blog:answer_detail', kwargs={'id': self.id})
 
 
 class Liked(models.Model):

@@ -13,5 +13,8 @@ urlpatterns = [
     path("create/", views.article_post, name="create"),
     path("delete/<int:id>", views.article_delete, name="delete"),
     path("edit/<int:id>", views.article_edit, name="edit"),
-
+    path("answer_detail/<int:id>/", views.answer_detail, name="answer_detail"),
+    path("answer_delete/<int:id>/", views.answer_del, name="answer_delete"),
+    path("answer_create/<int:id>", views.answer_post, name="answer_create"),
+    path("answer_edit/<int:id>", views.answer_edit, name="answer_edit"),
 ]

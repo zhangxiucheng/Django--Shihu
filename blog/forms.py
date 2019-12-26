@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, Answer
 from mdeditor.fields import MDTextFormField
 
 
@@ -23,9 +23,14 @@ class ArticleForm(forms.ModelForm):
 class AnswerForm(forms.Form):
     title = forms.CharField()
     body = MDTextFormField()
-    #tags是一个多选
     tags = forms.MultipleChoiceField()
 
     def __init__(self, *args, **kwargs):
         # 执行父类构造方法
         super(AnswerForm, self).__init__(*args, **kwargs)
+
+
+class AnswerPostForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ('title', 'body', 'tags')

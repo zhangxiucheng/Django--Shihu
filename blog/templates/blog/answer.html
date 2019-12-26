@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load blog_extra %}
+{% load comment_extras %}
+{% load staticfiles %}
+{% block title %}{{ answer.title }}{% endblock %}
+{% block content %}
+    {% if request.session.is_login %}
+        <article class="answer post-{{ answer.id }}">
+            <header class="entry-header">
+                <h1 class="entry-title">{{ answer.title }}</h1>
+                <div class="entry-meta">
+                    <span class="post-date"><a><time class="entry-date"
+                                                     datetime="{{ answer.created_time }}">{{ answer.created_time }}</time></a></span>
+                    <span class="post-author"><a href="#">{{ answer.author }}</a></span>
+                    <span class="comments-link"><a href="#comment-area">{{ answer.comment_set.count }} 评论</a></span>
+                    <span class="views-count"><a>{{ answer.views }} 阅读</a></span>
+                    {% if delete_allowance == 'allowed' %}
+                        <span class="button"><a href="#" onclick="confirm_safe_delete()">删除回答</a>
+                        <form style="display:none;" id="safe_delete" action="{% url 'blog:answer_delete' answer.id %}"
+                              method="POST">
+                            {% csrf_token %}
+                            <button type="submit">发送</button>
+                        </form>
+                        </span>
+                        <span class="button"><a href="{% url 'blog:answer_edit' answer.id %}">编辑回答</a></span>
+                    {% endif %}
+                </div>
+            </header>
+            <div class="entry-content clearfix">
+                {{ answer.body|safe }}
+            </div>
+        </article>
+        <section class="comment-area" id="comment-area">
+            <h3>发表评论</h3>
+            {% show_comment_form answer %}
+            {% block message %}
+            {% endblock %}
+            <div class="comment-list-panel">
+                {% show_comments answer %}
+            </div>
+        </section>
+    {% else %}
+        <article class="post post-{{ answer.id }}">
+            <header class="entry-header">
+                <h1 class="entry-title">{{ answer.title }}</h1>
+                <div class="entry-meta">
+                    <span class="post-date"><a><time class="entry-date"
+                                                     datetime="{{ answer.created_time }}">{{ answer.created_time }}</time></a></span>
+                    <span class="post-author"><a href="#">{{ answer.author }}</a></span>
+                    <span class="comments-link"><a href="#comment-area">{{ answer.comment_set.count }} 评论</a></span>
+                    <span class="views-count"><a>{{ answer.views }} 阅读</a></span>
+                </div>
+            </header>
+            <div class="entry-content clearfix">
+                {{ answer.body|safe }}
+            </div>
+        </article>
+
+        <section class="comment-area" id="comment-area">
+            <div class="comment-list-panel">
+                {% show_comments answer %}
+            </div>
+        </section>
+    {% endif %}
+    <script>
+        function confirm_safe_delete() {
+            layer.open({
+                title: "确认删除",
+                content: "确认删除这个回答吗?",
+                yes: function (index, layero) {
+                    $('form#safe_delete button').click();
+                    layer.close(index);
+                }
+            })
+        }
+    </script>
+{% endblock %}
+{% block sidemenu %}
+    <div class="col-md-4">
+        <div class="aside">
+            {% block toc %}
+                {% if answer.toc %}
+                    <div class="widget widget-content">
+                        <h3 class="widget-title">目录</h3>{{ answer.toc|safe }}
+                    </div>
+                {% endif %}
+            {% endblock %}
+            {% show_authors answer.author %}
+            <div class="rss">
+                <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

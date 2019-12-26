@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from .models import Post, Category, Tag, Answer, Liked
-from .forms import ArticlePostForm, ArticleForm, AnswerForm
+from .forms import ArticlePostForm, ArticleForm, AnswerForm, AnswerPostForm
 from login.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator
@@ -24,7 +24,7 @@ def detail(request, pk):
     post.body = md.convert(post.body)
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     post.toc = m.group(1) if m is not None else ''
-    answer_list = Answer.objects.filter(post=post)
+    answer_list = Answer.objects.filter(post=post).order_by('-views')
     if request.session.get('is_login', None):
         id = request.session['user_id']
         if id == post.author.id:
@@ -153,24 +153,26 @@ def answer_post(request, id):
         if request.session.get('is_login', None):
             if not Post.objects.filter(id=id):
                 return HttpResponse('没有这篇文章')
-            answer = AnswerForm(request.POST)
+            answer = AnswerPostForm(request.POST)
             if answer.is_valid():
                 article = answer.save(commit=False)
                 article.author = User.objects.get(name=request.session.get('user_name'))
                 article.created_time = timezone.now()
                 article.post = Post.objects.get(id=id)
                 article.save()
-                return redirect('/blog')
+                return redirect('blog:answer_detail', article.id)
             else:
                 return HttpResponse('表单内容有误')
         else:
             return HttpResponse('您尚未登陆,无法写回答')
     else:
         if request.session.get('is_login', None):
-            answer = AnswerForm()
+            if not Post.objects.filter(id=id):
+                return HttpResponse('没有这篇文章')
+            answer = AnswerPostForm()
             tags_list = Tag.objects.all()
-            context = {'answer_form': answer, 'tags_list': tags_list}
-            return render(request, 'blog/create.html', context)
+            context = {'answer_form': answer, 'tags_list': tags_list, 'post': Post.objects.get(id=id)}
+            return render(request, 'blog/create_answer.html', context)
         else:
             return HttpResponse('您尚未登陆,无法写回答')
 
@@ -182,34 +184,37 @@ def answer_del(request, id):
         article = Answer.objects.get(id=id)
         if not article.author.id == request.session.get('user_id', None):
             return HttpResponse('这不是您的文章,请查证后操作')
+        post = Post.objects.get(id=article.post.id)
         article.delete()
-        return redirect('/blog')
+        return redirect('blog:detail', post.id)
     else:
         return HttpResponse("非法操作")
 
 
 def answer_edit(request, id):
-    if request.session.get('is_login', None):
+    if not request.session.get('is_login', None):
         return HttpResponse('您尚未登陆,无法操作')
+    if not Answer.objects.filter(id=id):
+        return HttpResponse('无此回答,请确认后操作')
     answer = Answer.objects.get(id=id)
     if not answer.author.id == request.session.get('user_id', None):
         return HttpResponse('非法操作!')
     if request.method == "POST":
-        answer_form = AnswerForm(request.POST)
+        answer_form = AnswerPostForm(request.POST)
         if answer_form.is_valid():
             answer.title = request.POST['title']
             answer.body = request.POST['body']
             answer.tags.set(*request.POST.get('tags').split(','), clear=True)
             answer.save()
-            return redirect()
+            return redirect('blog:answer_detail', answer.id)
         else:
             return HttpResponse('表单内容有误,请重新输入')
     else:
         dic = {'title': answer.title, 'body': answer.body, 'tags': answer.tags}
         answer_form = AnswerForm(dic)
         tags_list = Tag.objects.all()
-        context = {'answer_form': answer_form, 'tags_list': tags_list}
-        return render(request, '', context)
+        context = {'answer_form': answer_form, 'tags_list': tags_list, 'id': answer.post.id}
+        return render(request, 'blog/answer_edit.html', context)
 
 
 def answer_detail(request, id):
@@ -229,6 +234,6 @@ def answer_detail(request, id):
         id = request.session['user_id']
         if id == answer.author.id:
             k = 'allowed'
-            return render(request, "blog/.html", context={'answer': answer, 'delete_allowance': k})
+            return render(request, "blog/answer.html", context={'answer': answer, 'delete_allowance': k})
     k = 'not_allowed'
-    return render(request, "blog/.html", context={'answer': answer, 'delete_allowance': k})
+    return render(request, "blog/answer.html", context={'answer': answer, 'delete_allowance': k})
