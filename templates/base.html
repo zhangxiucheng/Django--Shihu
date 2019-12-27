@@ -9,7 +9,14 @@
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'highlights/github.css' %}">
+    <link rel="stylesheet" href="{% static 'md_css/monokai.css' %}">
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+          crossorigin="anonymous"
+    >
     {% block css %}{% endblock %}
+</head>
 <body>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -70,16 +77,8 @@
 </nav>
 <div id="wrapper">
     <div class="content-body">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    {% block content %}
-                    {% endblock content %}
-                </div>
-                {% block sidemenu %}
-                {% endblock %}
-            </div>
-        </div>
+        {% block content %}
+        {% endblock content %}
     </div>
     <div id="push"></div>
 </div>

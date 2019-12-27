@@ -3,32 +3,36 @@
 {% load staticfiles %}
 {% block title %}主页{% endblock %}
 {% block content %}
-    {% for post in post_list %}
-        <article class="post post-{{ post.pk }}">
-            <h1 class="entry-title">
-                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-            </h1>
-            <div class="entry-meta">
-                <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-                <span class="post-date"><a href="#"><time class="entry-date"
-                                                          datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
-                <span class="post-author"><a href="#">{{ post.author }}</a></span>
-                <span class="comments-link"><a
-                        href="{{ post.get_absolute_url }}#comment-area">{{ post.comment_set.count }} 评论</a></span>
-                <span class="views-count"><a href="#">{{ post.views }} 阅读</a></span>
-            </div>
-            <div class="entry-content clearfix">
-                <p>{{ post.excerpt }}</p>
-                <div class="read-more cl-effect-14">
-                    <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
-                </div>
-            </div>
-        </article>
-    {% empty %}
-        <div class="no-post">暂时还没有发布的文章！</div>
-    {% endfor %}
-    <div class="pagination row">
-        <div class="m-auto">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                {% for post in post_list %}
+                    <article class="post post-{{ post.pk }}">
+                        <h1 class="entry-title">
+                            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                        </h1>
+                        <div class="entry-meta">
+                            <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
+                            <span class="post-date"><a href="#"><time class="entry-date"
+                                                                      datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                            <span class="post-author"><a href="#">{{ post.author }}</a></span>
+                            <span class="comments-link"><a
+                                    href="{{ post.get_absolute_url }}#comment-area">{{ post.comment_set.count }} 评论</a></span>
+                            <span class="views-count"><a href="#">{{ post.views }} 阅读</a></span>
+                        </div>
+                        <div class="entry-content clearfix">
+                            <p>{{ post.excerpt }}</p>
+                            <div class="read-more cl-effect-14">
+                                <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span
+                                        class="meta-nav">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="no-post">暂时还没有发布的文章！</div>
+                {% endfor %}
+                <div class="pagination row">
+                    <div class="m-auto">
             <span class="step-links">
                 <!-- 如果不是第一页，则显示上翻按钮 -->
                 {% if post_list.has_previous %}
@@ -63,19 +67,20 @@
                     </a>
                 {% endif %}
             </span>
+                    </div>
+                </div>
+            </div>
+            <aside class="col-md-4">
+                {% block toc %}
+                {% endblock toc %}
+                {% show_recent_posts %}
+                {% show_ars %}
+                {% show_categories %}
+                {% show_tags %}
+                <div class="rss">
+                    <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+                </div>
+            </aside>
         </div>
     </div>
-{% endblock %}
-{% block sidemenu %}
-    <aside class="col-md-4">
-        {% block toc %}
-        {% endblock toc %}
-        {% show_recent_posts %}
-        {% show_ars %}
-        {% show_categories %}
-        {% show_tags %}
-        <div class="rss">
-            <a href="/blog/money/"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
-        </div>
-    </aside>
 {% endblock %}

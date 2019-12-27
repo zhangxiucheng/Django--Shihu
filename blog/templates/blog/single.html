@@ -1,62 +1,85 @@
 {% extends 'base.html' %}
 {% load blog_extra %}
-{% load comment_extras %}
 {% load staticfiles %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
-    <article class="post post-{{ post.pk }}">
-        <header class="entry-header">
-            <h1 class="entry-title">{{ post.title }}</h1>
-            <div class="entry-meta">
-                <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
-                <span class="post-date"><a><time class="entry-date"
-                                                 datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
-                <span class="post-author"><a href="#">{{ post.author }}</a></span>
-                <span class="views-count"><a>{{ post.views }} 阅读</a></span>
-                <span class="answer-link"><a href="#answer">{{ answer_list.count }} 回答</a></span>
-                {% if delete_allowance == 'allowed' %}
-                    <span class="button"><a href="#" onclick="confirm_safe_delete()">删除问题</a>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <article class="post post-{{ post.pk }}">
+                    <header class="entry-header">
+                        <h1 class="entry-title">{{ post.title }}</h1>
+                        <div class="entry-meta">
+                            <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
+                            <span class="post-date"><a><time class="entry-date"
+                                                             datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+                            <span class="post-author"><a href="#">{{ post.author }}</a></span>
+                            <span class="views-count"><a>{{ post.views }} 阅读</a></span>
+                            <span class="answer-link"><a href="#answer">{{ answer_list.count }} 回答</a></span>
+                            {% if delete_allowance == 'allowed' %}
+                                <span class="button"><a href="#" onclick="confirm_safe_delete()">删除问题</a>
                         <form style="display:none;" id="safe_delete" action="{% url 'blog:delete' post.id %}"
                               method="POST">
                             {% csrf_token %}
                             <button type="submit">发送</button>
                         </form>
                         </span>
-                    <span class="button"><a href="{% url 'blog:edit' post.id %}">编辑文章</a></span>
-                {% endif %}
-            </div>
-        </header>
-        <div class="entry-content clearfix">
-            {{ post.body|safe }}
-        </div>
-    </article>
-    <section id="answer">
-        {% for answer in answer_list %}
-            <article class="post post-{{ answer.id }}">
-                <h1 class="entry-title">
-                    <a href="{{ answer.get_absolute_url }}">{{ answer.title }}</a>
-                </h1>
-                <div class="entry-meta">
+                                <span class="button"><a href="{% url 'blog:edit' post.id %}">编辑文章</a></span>
+                            {% endif %}
+                        </div>
+                    </header>
+                    <div class="entry-content clearfix">
+                        {{ post.body|safe }}
+                    </div>
+                </article>
+                <section id="answer">
+                    {% for answer in answer_list %}
+                        <article class="post post-{{ answer.id }}">
+                            <h1 class="entry-title">
+                                <a href="{{ answer.get_absolute_url }}">{{ answer.title }}</a>
+                            </h1>
+                            <div class="entry-meta">
                 <span class="post-date"><a href="#"><time class="entry-date"
                                                           datetime="{{ answer.created_time }}">{{ answer.created_time }}</time></a></span>
-                    <span class="post-author"><a href="#">{{ answer.author }}</a></span>
-                    <span class="comments-link"><a
-                            href="{{ answer.get_absolute_url }}#comment-area">{{ answer.comment_set.count }} 评论</a></span>
-                    <span class="views-count"><a href="#">{{ answer.views }} 阅读</a></span>
-                </div>
-                <div class="entry-content clearfix">
-                    <p>{{ answer.excerpt }}</p>
-                    <div class="read-more cl-effect-14">
-                        <a href="{{ answer.get_absolute_url }}" class="more-link">继续阅读 <span
-                                class="meta-nav">→</span></a>
+                                <span class="post-author"><a href="#">{{ answer.author }}</a></span>
+                                <span class="comments-link"><a
+                                        href="{{ answer.get_absolute_url }}#comment-area">{{ answer.comment_set.count }} 评论</a></span>
+                                <span class="views-count"><a href="#">{{ answer.views }} 阅读</a></span>
+                            </div>
+                            <div class="entry-content clearfix">
+                                <p>{{ answer.excerpt }}</p>
+                                <div class="read-more cl-effect-14">
+                                    <a href="{{ answer.get_absolute_url }}" class="more-link">继续阅读 <span
+                                            class="meta-nav">→</span></a>
+                                </div>
+                            </div>
+                        </article>
+                    {% empty %}
+                        <div class="no-post">暂时还没有回答</div>
+                    {% endfor %}
+                    <span class="container"><a href="{% url 'blog:answer_create' post.id %}">写回答</a></span>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <div class="sidebar">
+                    {% block toc %}
+                        {% if post.toc %}
+                            <div class="widget widget-content">
+                                <h3 class="widget-title">目录</h3>{{ post.toc|safe }}
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                    {% show_authors post.author %}
+                    <div class="rss">
+                        <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
                     </div>
                 </div>
-            </article>
-        {% empty %}
-            <div class="no-post">暂时还没有回答</div>
-        {% endfor %}
-    <span class="container"><a href="{% url 'blog:answer_create' post.id %}">写回答</a></span>
-    </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
     <script>
         function confirm_safe_delete() {
             layer.open({
@@ -69,21 +92,4 @@
             })
         }
     </script>
-{% endblock %}
-{% block sidemenu %}
-    <div class="col-md-4">
-        <div class="aside">
-            {% block toc %}
-                {% if post.toc %}
-                    <div class="widget widget-content">
-                        <h3 class="widget-title">目录</h3>{{ post.toc|safe }}
-                    </div>
-                {% endif %}
-            {% endblock %}
-            {% show_authors post.author %}
-            <div class="rss">
-                <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
-            </div>
-        </div>
-    </div>
 {% endblock %}
