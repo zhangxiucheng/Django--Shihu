@@ -6,7 +6,7 @@ from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from .models import Post, Category, Tag, Answer, Liked
 from .forms import ArticlePostForm, ArticleForm, AnswerForm, AnswerPostForm
-from login.models import User
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator
 from comments.models import Comment
@@ -92,7 +92,7 @@ def article_post(request):
             article_post_form = ArticleForm(request.POST)
             if article_post_form.is_valid():
                 article = article_post_form.save(commit=False)
-                article.author = User.objects.get(name=request.session.get('user_name'))
+                article.author = User.objects.get(username=request.session.get('user_name'))
                 article.created_time = timezone.now()
                 article.save()
                 return redirect('/blog')
@@ -157,7 +157,7 @@ def answer_post(request, id):
             answer = AnswerPostForm(request.POST)
             if answer.is_valid():
                 article = answer.save(commit=False)
-                article.author = User.objects.get(name=request.session.get('user_name'))
+                article.author = User.objects.get(username=request.session.get('user_name'))
                 article.created_time = timezone.now()
                 article.post = Post.objects.get(id=id)
                 article.save()

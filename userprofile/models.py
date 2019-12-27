@@ -1,5 +1,5 @@
 from django.db import models
-from login.models import User
+from django.contrib.auth.models import User
 
 
 class Profile(models.Model):
@@ -13,5 +13,4 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
-        return 'user {}'.format(self.user.name)
-
+        return 'user {}'.format(self.user.username)

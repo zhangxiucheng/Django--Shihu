@@ -15,21 +15,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from django.conf.urls import url
+import notifications.urls
 from login import views
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("login/", views.login),
+    path("login/", views.user_login),
     path("register/", views.register),
-    path("logout/", views.logout),
+    path("logout/", views.user_logout),
     path("captcha/", include("captcha.urls")),
     path("blog/", include("blog.urls")),
     path("comments/", include("comments.urls")),
     path('reset_passowrd/', include('reset_passowrd.urls')),
     path('user_profile/', include('userprofile.urls')),
-    path('mdeditor/', include('mdeditor.urls'))
+    path('mdeditor/', include('mdeditor.urls')),
+    path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path('notice/', include('notice.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

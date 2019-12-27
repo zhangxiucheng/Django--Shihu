@@ -2,7 +2,7 @@ from blog.models import Answer
 from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
 from django.utils import timezone
 from .forms import CommentForm
-from login.models import User
+from django.contrib.auth.models import User
 from .models import Comment
 from notifications.signals import notify
 
@@ -28,7 +28,7 @@ def comment(request, id, reply=None):
             comment = form.save(commit=False)
             comment.created_time = timezone.now()
             comment.post = post
-            user = User.objects.get(name=request.session.get('user_name'))
+            user = User.objects.get(username=request.session.get('user_name'))
             comment.user = user
             if reply:
                 parent_comment = Comment.objects.get(id=reply)

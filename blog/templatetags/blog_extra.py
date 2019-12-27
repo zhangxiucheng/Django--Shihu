@@ -1,5 +1,4 @@
 from django import template
-from login.models import User
 from ..models import Post, Category, Tag
 
 register = template.Library()
@@ -23,7 +22,7 @@ def show_ars(context):
 def show_authors(author):
     return {
         'author_post_list': Post.objects.filter(author=author),
-        'author_name': author.name,
+        'author_name': author.username,
     }
 
 
@@ -39,3 +38,4 @@ def show_tags(context):
     return {
         'tags_list': Tag.objects.all(),
     }
+

@@ -1,6 +1,6 @@
 from django.db import models
 from blog.models import Answer
-from login.models import User
+from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 from mptt.models import MPTTModel, TreeForeignKey
 

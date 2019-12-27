@@ -2,10 +2,9 @@ import datetime
 import pytz
 from django.shortcuts import render, redirect
 from .forms import UserForm, UserPass, UserCode
-from login.models import User
+from django.contrib.auth.models import User
 from django.conf import settings
 from .models import ConfirmString
-import hashlib
 
 
 def make_confirm_string(user):
@@ -49,8 +48,8 @@ def user_confirm(request):
         username_form = UserForm(request.POST)
         if username_form.is_valid():
             username = username_form.cleaned_data['username']
-            if User.objects.filter(name=username):
-                user = User.objects.get(name=username)
+            if User.objects.filter(username=username):
+                user = User.objects.get(username=username)
                 request.session['user_id'] = user.id
                 if ConfirmString.objects.filter(user=user):
                     return render(request, 'reset_passowrd/_message.html', locals())
@@ -131,7 +130,7 @@ def user_changepass(request):
                     return render(request, 'reset_passowrd/pass.html', locals())
                 else:
                     user = User.objects.get(id=request.session.get('user_id', None))
-                    user.password = hash_code(password1)
+                    user.set_password(password1)
                     user.save()
                     confirm = ConfirmString.objects.get(user=user)
                     confirm.delete()
@@ -142,10 +141,3 @@ def user_changepass(request):
             return render(request, 'reset_passowrd/pass.html', locals())
     else:
         return render(request, 'reset_passowrd/confirm.html', locals())
-
-
-def hash_code(s, salt='mysite'):  # 加点盐
-    h = hashlib.sha256()
-    s += salt
-    h.update(s.encode())  # update方法只接收bytes类型
-    return h.hexdigest()

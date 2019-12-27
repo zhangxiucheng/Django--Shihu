@@ -1,6 +1,6 @@
 from .forms import ProfileForm
 from .models import Profile
-from login.models import User
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, HttpResponse
 from blog.models import Post
 
