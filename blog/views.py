@@ -9,6 +9,7 @@ from .forms import ArticlePostForm, ArticleForm, AnswerForm, AnswerPostForm
 from login.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator
+from comments.models import Comment
 
 
 def detail(request, pk):
@@ -228,12 +229,18 @@ def answer_detail(request, id):
     ], safe_mode=True, enable_attributes=False)
     answer.increase_views()
     answer.body = md.convert(answer.body)
+    comment_list = Comment.objects.filter(post=answer)
+    comment_count = comment_list.count()
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     answer.toc = m.group(1) if m is not None else ''
     if request.session.get('is_login', None):
         id = request.session['user_id']
         if id == answer.author.id:
             k = 'allowed'
-            return render(request, "blog/answer.html", context={'answer': answer, 'delete_allowance': k})
+            return render(request, "blog/answer.html",
+                          context={'answer': answer, 'delete_allowance': k, 'comment_count': comment_count,
+                                   'comment_list': comment_list})
     k = 'not_allowed'
-    return render(request, "blog/answer.html", context={'answer': answer, 'delete_allowance': k})
+    return render(request, "blog/answer.html",
+                  context={'answer': answer, 'delete_allowance': k, 'comment_count': comment_count,
+                           'comment_list': comment_list})

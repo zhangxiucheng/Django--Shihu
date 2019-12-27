@@ -1,5 +1,6 @@
 from django import template
 from ..forms import CommentForm
+from ..models import Comment
 
 register = template.Library()
 
@@ -15,10 +16,12 @@ def show_comment_form(context, answer, form=None):
 
 
 @register.inclusion_tag('./inclusions/_list.html', takes_context=True)
-def show_comments(context, answer):
-    comment_list = answer.comment_set.all().order_by('-created_time')
+def show_comments(context, answer, request):
+    comment_list = Comment.objects.filter(post=answer)
     comment_count = comment_list.count()
     return {
         'comment_count': comment_count,
         'comment_list': comment_list,
+        'answer': answer,
+        'request': request,
     }
