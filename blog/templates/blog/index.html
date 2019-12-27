@@ -23,8 +23,7 @@
                         <div class="entry-content clearfix">
                             <p>{{ post.excerpt }}</p>
                             <div class="read-more cl-effect-14">
-                                <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span
-                                        class="meta-nav">→</span></a>
+                                <a href="{{ post.get_absolute_url }}" class="more-link">继续阅读 <span class="meta-nav">→</span></a>
                             </div>
                         </div>
                     </article>
@@ -40,47 +39,42 @@
                     &laquo; 1
                     </a>
                     <span>...</span>
-                    <a href="?page={{ post_list.previous_page_number }}"
-                       class="btn btn-secondary"
-                    >
+                    <a href="?page={{ post_list.previous_page_number }}" class="btn btn-secondary">
                         {{ post_list.previous_page_number }}
                     </a>
                 {% endif %}
-
                 <!-- 当前页面 -->
                 <span class="current btn btn-danger btn-lg">
                     {{ post_list.number }}
                 </span>
-
                 <!-- 如果不是最末页，则显示下翻按钮 -->
                 {% if post_list.has_next %}
-                    <a href="?page={{ post_list.next_page_number }}"
-                       class="btn btn-secondary"
-                    >
+                    <a href="?page={{ post_list.next_page_number }}" class="btn btn-secondary">
                         {{ post_list.next_page_number }}
                     </a>
                     <span>...</span>
-                    <a href="?page={{ post_list.paginator.num_pages }}"
-                       class="btn btn-success"
-                    >
+                    <a href="?page={{ post_list.paginator.num_pages }}" class="btn btn-success">
                         {{ post_list.paginator.num_pages }} &raquo;
                     </a>
                 {% endif %}
             </span>
+
                     </div>
                 </div>
             </div>
-            <aside class="col-md-4">
-                {% block toc %}
-                {% endblock toc %}
-                {% show_recent_posts %}
-                {% show_ars %}
-                {% show_categories %}
-                {% show_tags %}
-                <div class="rss">
-                    <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
-                </div>
-            </aside>
+            <div id="sidebar" class="sidebar">
+                <aside class="col-md-4">
+                    {% show_recent_posts %}
+                    {% show_ars %}
+                    {% show_categories %}
+                    {% show_tags %}
+                    <div class="rss">
+                        <a href="{% url 'blog:money' %}"><span class="ion-social-rss-outline"></span>大哥大嫂过年好!</a>
+                    </div>
+                </aside>
+            </div>
         </div>
     </div>
+{% endblock %}
+{% block script %}
 {% endblock %}

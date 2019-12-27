@@ -1,15 +1,11 @@
 from blog.models import Answer
 from django.shortcuts import get_object_or_404, redirect, render, HttpResponse
-from django.views.decorators.http import require_POST
 from django.utils import timezone
 from .forms import CommentForm
 from login.models import User
 from .models import Comment
 
 
-# import markdown
-
-@require_POST
 def comment(request, id, reply=None):
     post = get_object_or_404(Answer, id=id)
     # django 将用户提交的数据封装在 request.POST 中，这是一个类字典对象。
@@ -25,23 +21,14 @@ def comment(request, id, reply=None):
     # rPOST.__setitem__("text", md.convert(rPOST.get("text")))
     if not request.session.get('is_login', None):
         return HttpResponse('请登录后操作')
-    if request.method == "GET":
-        comment_form = CommentForm()
-        context = {
-            'comment_form': comment_form,
-            'article_id': id,
-            'parent_comment_id': reply,
-        }
-        print('**********************comments_reply**********************')
-        return render(request, 'comments/reply.html', context)
-    elif request.method == "POST":
+    if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.created_time = timezone.now()
             comment.post = post
-            Author = User.objects.get(name=request.session.get('user_name'))
-            comment.author = Author
+            user = User.objects.get(name=request.session.get('user_name'))
+            comment.user = user
             if reply:
                 parent_comment = Comment.objects.get(id=reply)
                 # 若回复层级超过二级，则转换为二级
@@ -52,4 +39,11 @@ def comment(request, id, reply=None):
                 return HttpResponse('200 OK')
             comment.save()
             return redirect(post)
-    return redirect(post)
+    elif request.method == "GET":
+        comment_form = CommentForm()
+        context = {
+            'comment_form': comment_form,
+            'article_id': id,
+            'parent_comment_id': reply,
+        }
+        return render(request, 'comments/reply.html', context)

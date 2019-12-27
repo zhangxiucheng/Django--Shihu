@@ -21,7 +21,7 @@ def show_comments(context, answer, request):
     comment_count = comment_list.count()
     return {
         'comment_count': comment_count,
-        'comment_list': comment_list,
+        'comments': comment_list,
         'answer': answer,
         'request': request,
     }

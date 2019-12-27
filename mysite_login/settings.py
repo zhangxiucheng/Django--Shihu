@@ -24,7 +24,7 @@ SECRET_KEY = 'iqbj!4#v%zn)t(-s8dr#$_3#syqq#_ff&*+xfa0kd44*8(&p#e'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -126,9 +126,7 @@ STATICFILES_DIRS = [
 
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_HOST_USER = '2274296423@qq.com'
-# 你的邮箱密码
 EMAIL_HOST_PASSWORD = 'bfszzgnisdewdice'
-# 发送邮件的端口
 EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = '矢呼 <2274296423@qq.com>'
@@ -137,7 +135,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 CKEDITOR_CONFIGS = {
-    # django-ckeditor默认使用default配置
     'default': {
         # 编辑器宽度自适应
         'width': 'auto',

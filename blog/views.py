@@ -229,8 +229,17 @@ def answer_detail(request, id):
     ], safe_mode=True, enable_attributes=False)
     answer.increase_views()
     answer.body = md.convert(answer.body)
-    comment_list = Comment.objects.filter(post=answer)
-    comment_count = comment_list.count()
+    pre_article = Answer.objects.filter(id__lt=answer.id).order_by('-id')
+    next_article = Answer.objects.filter(id__gt=answer.id).order_by('id')
+    if pre_article.count() > 0:
+        pre_article = pre_article[0]
+    else:
+        pre_article = None
+
+    if next_article.count() > 0:
+        next_article = next_article[0]
+    else:
+        next_article = None
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     answer.toc = m.group(1) if m is not None else ''
     if request.session.get('is_login', None):
@@ -238,9 +247,9 @@ def answer_detail(request, id):
         if id == answer.author.id:
             k = 'allowed'
             return render(request, "blog/answer.html",
-                          context={'answer': answer, 'delete_allowance': k, 'comment_count': comment_count,
-                                   'comment_list': comment_list})
+                          context={'answer': answer, 'delete_allowance': k, 'pre_article': pre_article,
+                                   'next_article': next_article, })
     k = 'not_allowed'
     return render(request, "blog/answer.html",
-                  context={'answer': answer, 'delete_allowance': k, 'comment_count': comment_count,
-                           'comment_list': comment_list})
+                  context={'answer': answer, 'delete_allowance': k, 'pre_article': pre_article,
+                           'next_article': next_article, })

@@ -25,11 +25,11 @@ urlpatterns = [
     path("login/", views.login),
     path("register/", views.register),
     path("logout/", views.logout),
-    path(" captcha/", include("captcha.urls")),
-    url(r"blog/", include("blog.urls")),
-    url(r"comments/", include("comments.urls")),
+    path("captcha/", include("captcha.urls")),
+    path("blog/", include("blog.urls")),
+    path("comments/", include("comments.urls")),
     path('reset_passowrd/', include('reset_passowrd.urls')),
     path('user_profile/', include('userprofile.urls')),
-    url(r'mdeditor/', include('mdeditor.urls'))
+    path('mdeditor/', include('mdeditor.urls'))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

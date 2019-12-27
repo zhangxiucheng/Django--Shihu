@@ -6,7 +6,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Comment(MPTTModel):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     body = RichTextField()
     # 创建评论时间为当前系统时间,应改为utc/网络 时间
     created_time = models.DateTimeField(auto_now_add=True)
