@@ -4,6 +4,7 @@ from django.utils import timezone
 from .forms import CommentForm
 from login.models import User
 from .models import Comment
+from notifications.signals import notify
 
 
 def comment(request, id, reply=None):
@@ -31,13 +32,30 @@ def comment(request, id, reply=None):
             comment.user = user
             if reply:
                 parent_comment = Comment.objects.get(id=reply)
-                # 若回复层级超过二级，则转换为二级
                 comment.parent_id = parent_comment.get_root().id
-                # 被回复人
                 comment.reply_to = parent_comment.user
+                parent_user = User.objects.get(id=parent_comment.user.id)
                 comment.save()
+                if not parent_user == comment.user:
+                    notify.send(
+                        sender=user,
+                        recipient=parent_user,
+                        verb='replied',
+                        target=post,
+                        action_object=comment,
+                    )
                 return HttpResponse('200 OK')
+
             comment.save()
+            author = User.objects.get(id=post.author.id)
+            if not request.session.get('user_id', None) == post.author.id:
+                notify.send(
+                    sender=user,
+                    recipient=author,
+                    verb='commented',
+                    target=post,
+                    action_object=comment,
+                )
             return redirect(post)
     elif request.method == "GET":
         comment_form = CommentForm()
