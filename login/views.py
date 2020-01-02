@@ -12,7 +12,7 @@ def user_login(request):
     if request.method == "GET":
         request.session['login_from'] = request.META.get('HTTP_REFERER', '/')
     if request.method == "POST":
-        login_form = UserForm(request.POST)
+        login_form = UserForm(data=request.POST)
         if login_form.is_valid():
             if User.objects.filter(username=login_form.cleaned_data['username']):
                 user = authenticate(username=login_form.cleaned_data['username'],
