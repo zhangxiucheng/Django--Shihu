@@ -22,10 +22,10 @@ def user_login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.username
-                    if request.session['login_from'] == '/':
+                    if request.session.get('login_from', None) == '/':
                         return redirect('/blog')
                     else:
-                        return HttpResponseRedirect(request.session['login_from'])
+                        return HttpResponseRedirect(request.session.get('login_from', None))
                 else:
                     message = "密码不正确！"
             else:
