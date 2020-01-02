@@ -1,0 +1,30 @@
+@startuml comment-class
+
+package django.forms {
+    class ModelForm
+}
+
+package mptt.models {
+    class MPTTModel
+}
+
+package models {
+    class Comment {
+        created_time
+        body
+        user
+        post
+        parent
+        reply_to
+    }
+
+    Comment --|> MPTTModel
+}
+
+package forms {
+    class CommentForm 
+    CommentForm --|> ModelForm
+    CommentForm --o Comment
+}
+
+@enduml

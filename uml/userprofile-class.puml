@@ -1,0 +1,29 @@
+@startuml userprofile-class
+
+package django.forms {
+    class ModelForm
+}
+
+package django.db.models {
+    class Model
+}
+
+package models {
+    class Profile {
+        user
+        phone
+        avatar
+        bio
+    }
+
+    Profile --|> Model
+}
+
+
+package forms {
+    class ProfileForm
+
+    ProfileForm --|> ModelForm
+    ProfileForm --o Profile
+}
+@enduml
