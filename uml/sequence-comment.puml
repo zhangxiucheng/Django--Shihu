@@ -1,0 +1,11 @@
+@startuml sequence-comment
+actor 评论者
+actor 回答者
+评论者 --> show_comment_form: 使用评论框
+show_comment_form --> comment: 调用
+comment --> redirect: 回到评论者评论的回答
+comment --> notify: 调用
+notify --> CommentNoticeListView: 实例化
+CommentNoticeListView --> 回答者: 通知有未读消息
+回答者 --> CommentNoticeUpdateView: 查看未读消息
+@enduml

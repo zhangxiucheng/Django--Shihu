@@ -1,0 +1,38 @@
+@startuml login-class
+
+package django.forms {
+    class Form
+    class ModelForm
+}
+
+package django.contrib.auth.models {
+    class User {
+        username
+        email
+        password
+    }
+}
+
+package form {
+    class UserForm
+    class RegisterForm {
+        captcha
+        password2
+        password1
+    }
+
+    UserForm --|> Form
+    UserForm --o User
+    RegisterForm --|> ModelForm
+    RegisterForm --o User
+}
+
+package django.db.models {
+    class Model
+}
+
+package models {
+    class UserModel
+    UserModel --|> Model
+}
+@enduml

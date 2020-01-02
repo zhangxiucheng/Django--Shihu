@@ -1,0 +1,29 @@
+@startuml notice-class
+
+package views {
+    class CommentNoticeListView {
+        context_object_name
+        template_name
+        login_url
+        get_queryset()
+    }
+    class CommentNoticeUpdateView {
+        get()
+    }
+}
+
+package django.contrib.auth.mixins {
+    class LoginRequiredMixin
+}
+
+package django.views {
+    package generic {
+        class ListView
+    }
+    class View
+}
+
+CommentNoticeListView --|> LoginRequiredMixin
+CommentNoticeListView --|> ListView
+CommentNoticeUpdateView --|> View
+@enduml

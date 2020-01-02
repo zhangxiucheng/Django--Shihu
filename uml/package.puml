@@ -1,0 +1,35 @@
+@startuml package
+
+package blog
+package comments
+package notice
+
+
+package 用户相关 {
+    package user
+    package reset_password
+    package userprofile
+}
+
+package 现成的库 {
+    package capatcha
+    package ckeditor
+    package mdeditor
+    package mptt
+    package notifications
+}
+
+
+comments --> blog: 包含于
+notice --> notifications: 使用
+comments --> ckeditor: 使用
+comments --> mptt: 使用
+blog --> mdeditor: 使用
+userprofile --> user: 扩充（头像啥的）
+reset_password --> user: 功能扩充
+user --> comments: 回答
+user --> blog: 提问
+
+
+
+@enduml
