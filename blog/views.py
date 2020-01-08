@@ -89,7 +89,39 @@ def article_list(request):
 def article_post(request):
     if request.method == "POST":
         if request.session.get('is_login', None):
-            article_post_form = ArticleForm(request.POST)
+
+            rPost = request.POST.copy()
+
+            import pprint
+            print('before ---->')
+            pprint.pprint(rPost)
+
+            if ('' == rPost['category']):
+                return HttpResponse('表单内容有误')
+            else:
+                if rPost['category'] not in [c.name for c in Category.objects.all()]:
+                    category = Category(name=rPost['category'])
+                    category.save()
+                print('cid', str(Category.objects.get(name=rPost['category']).id))
+                rPost['category'] = str(Category.objects.get(name=rPost['category']).id)
+
+            if ('' == rPost['tags']):
+                return HttpResponse('表单内容有误')
+            else:
+                ids = []
+                tags = [t.name for t in Tag.objects.all()]
+                for tag in rPost['tags'].split():
+                    if tag not in tags:
+                        t = Tag(name=tag)
+                        t.save()
+                    ids.append(Tag.objects.get(name=tag).id)
+                rPost['tags'] = str(ids[0])
+                # rPost['tags'] = ' '.join(map(str, ids))
+
+            print('after ---->')
+            pprint.pprint(rPost)
+            
+            article_post_form = ArticleForm(rPost)
             if article_post_form.is_valid():
                 article = article_post_form.save(commit=False)
                 article.author = User.objects.get(username=request.session.get('user_name'))
