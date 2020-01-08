@@ -98,7 +98,6 @@ def article_post(request):
                 if rPost['category'] not in [c.name for c in Category.objects.all()]:
                     category = Category(name=rPost['category'])
                     category.save()
-                print('cid', str(Category.objects.get(name=rPost['category']).id))
                 rPost['category'] = str(Category.objects.get(name=rPost['category']).id)
 
             if ('' == rPost['tags']):
