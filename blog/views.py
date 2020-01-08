@@ -1,7 +1,7 @@
 import re
 import markdown
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from .models import Post, Category, Tag, Answer, Liked
@@ -92,10 +92,6 @@ def article_post(request):
 
             rPost = request.POST.copy()
 
-            import pprint
-            print('before ---->')
-            pprint.pprint(rPost)
-
             if ('' == rPost['category']):
                 return HttpResponse('表单内容有误')
             else:
@@ -115,12 +111,13 @@ def article_post(request):
                         t = Tag(name=tag)
                         t.save()
                     ids.append(Tag.objects.get(name=tag).id)
-                rPost['tags'] = str(ids[0])
-                # rPost['tags'] = ' '.join(map(str, ids))
 
-            print('after ---->')
-            pprint.pprint(rPost)
-            
+                init_string = ''
+                for i in ids:
+                    init_string = init_string + 'tags=' + str(i) + '&'
+                rPost.pop('tags')
+                rPost.update(QueryDict(init_string))
+
             article_post_form = ArticleForm(rPost)
             if article_post_form.is_valid():
                 article = article_post_form.save(commit=False)
