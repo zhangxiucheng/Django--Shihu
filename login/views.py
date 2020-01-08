@@ -25,7 +25,7 @@ def user_login(request):
                     if request.session.get('login_from', None) == '/':
                         return redirect('/blog')
                     else:
-                        return HttpResponseRedirect(request.session.get('login_from', None))
+                        return HttpResponseRedirect(request.session.get('login_from'))
                 else:
                     message = "密码不正确！"
             else:

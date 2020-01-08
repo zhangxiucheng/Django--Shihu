@@ -95,6 +95,8 @@ def article_post(request):
                 article.author = User.objects.get(username=request.session.get('user_name'))
                 article.created_time = timezone.now()
                 article.save()
+                article.tags.set(article_post_form.cleaned_data['tags'])
+                print(article.tags)
                 return redirect('/blog')
             else:
                 return HttpResponse('表单内容有误')
@@ -129,8 +131,8 @@ def article_edit(request, id):
                 article.title = request.POST['title']
                 article.body = request.POST['body']
                 article.category = Category.objects.get(id=request.POST['category'])
-                article.tags.set(*request.POST.get('tags').split(','), clear=True)
                 article.save()
+                article.tags.set(article_post_form.cleaned_data['tags'])
                 return redirect("blog:detail", pk=id)
             else:
                 return HttpResponse('表单内容有误')
@@ -161,6 +163,8 @@ def answer_post(request, id):
                 article.created_time = timezone.now()
                 article.post = Post.objects.get(id=id)
                 article.save()
+                article.tags.set(answer.cleaned_data['tags'])
+                print(article.tags)
                 return redirect('blog:answer_detail', article.id)
             else:
                 return HttpResponse('表单内容有误')
@@ -205,8 +209,8 @@ def answer_edit(request, id):
         if answer_form.is_valid():
             answer.title = request.POST['title']
             answer.body = request.POST['body']
-            answer.tags.set(*request.POST.get('tags').split(','), clear=True)
             answer.save()
+            answer.tags.set(answer_form.cleaned_data['tags'])
             return redirect('blog:answer_detail', answer.id)
         else:
             return HttpResponse('表单内容有误,请重新输入')
