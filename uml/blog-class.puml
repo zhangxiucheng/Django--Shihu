@@ -9,7 +9,6 @@ package django.db.models {
     class Model
 }
 
-
 package models {
     class Category {
         name
@@ -79,18 +78,14 @@ package form {
     class AnswerPostForm
 
     ArticlePostForm --|> Form
-    ArticlePostForm --o Post
-
 
     ArticleForm --|> ModelForm
+    ArticleForm --o Post
 
     AnswerForm --|> Form
-    AnswerForm --o Answer
 
     AnswerPostForm --|> ModelForm
+    AnswerPostForm --o Answer
 }
-
-
-
 
 @enduml

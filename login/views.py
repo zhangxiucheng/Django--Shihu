@@ -25,7 +25,7 @@ def user_login(request):
                     if request.session.get('login_from', None) == '/':
                         return redirect('/blog')
                     else:
-                        return HttpResponseRedirect(request.session.get('login_from', None))
+                        return HttpResponseRedirect(request.session.get('login_from'))
                 else:
                     message = "密码不正确！"
             else:
@@ -36,7 +36,6 @@ def user_login(request):
 
 
 def user_logout(request):
-    # 没登录也就没退出这说
     if not request.session.get('is_login', None):
         return redirect('/blog')
     logout(request)
@@ -46,7 +45,6 @@ def user_logout(request):
 
 def register(request):
     if request.session.get('is_login', None):
-        # 登录状态不允许注册。你可以修改这条原则！
         return redirect('/blog')
     if request.method == "POST":
         register_form = RegisterForm(data=request.POST)
@@ -73,7 +71,9 @@ def register(request):
                 new_user.username = register_form.cleaned_data['username']
                 new_user.email = register_form.cleaned_data['email']
                 new_user.save()
-                return redirect('/login/')  # 自动跳转到登录页面
+                message = "注册成功"
+                login_form = UserForm()
+                return render(request, 'login/login.html', locals())  # 自动跳转到登录页面
         message = '验证码错误!'
         return render(request, 'login/register.html', locals())
     register_form = RegisterForm()

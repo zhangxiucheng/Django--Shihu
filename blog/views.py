@@ -1,7 +1,7 @@
 import re
 import markdown
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
 from .models import Post, Category, Tag, Answer, Liked
@@ -91,12 +91,42 @@ def article_list(request):
 def article_post(request):
     if request.method == "POST":
         if request.session.get('is_login', None):
-            article_post_form = ArticleForm(request.POST)
+
+            rPost = request.POST.copy()
+
+            if ('' == rPost['category']):
+                return HttpResponse('表单内容有误')
+            else:
+                if rPost['category'] not in [c.name for c in Category.objects.all()]:
+                    category = Category(name=rPost['category'])
+                    category.save()
+                rPost['category'] = str(Category.objects.get(name=rPost['category']).id)
+
+            if ('' == rPost['tags']):
+                return HttpResponse('表单内容有误')
+            else:
+                ids = []
+                tags = [t.name for t in Tag.objects.all()]
+                for tag in rPost['tags'].split():
+                    if tag not in tags:
+                        t = Tag(name=tag)
+                        t.save()
+                    ids.append(Tag.objects.get(name=tag).id)
+
+                init_string = ''
+                for i in ids:
+                    init_string = init_string + 'tags=' + str(i) + '&'
+                rPost.pop('tags')
+                rPost.update(QueryDict(init_string))
+
+            article_post_form = ArticleForm(rPost)
             if article_post_form.is_valid():
                 article = article_post_form.save(commit=False)
                 article.author = User.objects.get(username=request.session.get('user_name'))
                 article.created_time = timezone.now()
                 article.save()
+                article.tags.set(article_post_form.cleaned_data['tags'])
+                print(article.tags)
                 return redirect('/blog')
             else:
                 return HttpResponse('表单内容有误')
@@ -131,8 +161,8 @@ def article_edit(request, id):
                 article.title = request.POST['title']
                 article.body = request.POST['body']
                 article.category = Category.objects.get(id=request.POST['category'])
-                article.tags.set(*request.POST.get('tags').split(','), clear=True)
                 article.save()
+                article.tags.set(article_post_form.cleaned_data['tags'])
                 return redirect("blog:detail", pk=id)
             else:
                 return HttpResponse('表单内容有误')
@@ -163,6 +193,8 @@ def answer_post(request, id):
                 article.created_time = timezone.now()
                 article.post = Post.objects.get(id=id)
                 article.save()
+                article.tags.set(answer.cleaned_data['tags'])
+                print(article.tags)
                 return redirect('blog:answer_detail', article.id)
             else:
                 return HttpResponse('表单内容有误')
@@ -207,8 +239,8 @@ def answer_edit(request, id):
         if answer_form.is_valid():
             answer.title = request.POST['title']
             answer.body = request.POST['body']
-            answer.tags.set(*request.POST.get('tags').split(','), clear=True)
             answer.save()
+            answer.tags.set(answer_form.cleaned_data['tags'])
             return redirect('blog:answer_detail', answer.id)
         else:
             return HttpResponse('表单内容有误,请重新输入')
